@@ -3,18 +3,20 @@
 
 #pragma once
 
+#include <QComboBox>
+#include <QFileDialog>
 #include <QMainWindow>
 #include <QTimer>
-#include <QComboBox>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
-#include "UkladRegulacji.h"
-#include <QFileDialog>
 #include "ModelDialog.h"
+#include "UkladRegulacji.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+class MainWindow;
+}
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -45,6 +47,7 @@ private slots:
     void on_comboBoxSposobCalkowania_currentIndexChanged(int index);
 
 private:
+    int test_zmiany=0;/////////////////////////
     int krok = 0;
     Ui::MainWindow *ui;
     UkladRegulacji *uklad;

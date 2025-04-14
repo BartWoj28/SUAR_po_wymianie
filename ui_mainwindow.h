@@ -146,7 +146,6 @@ public:
 
         gridLayout_2->addWidget(label_7, 0, 3, 1, 1);
 
-
         gridLayout->addLayout(gridLayout_2, 3, 0, 1, 1);
 
         verticalLayoutPID = new QVBoxLayout();
@@ -194,7 +193,6 @@ public:
         resetButton->setAutoFillBackground(true);
 
         horizontalLayout->addWidget(resetButton);
-
 
         gridLayout->addLayout(horizontalLayout, 4, 0, 1, 1);
 
@@ -260,7 +258,6 @@ public:
 
         gridLayout_3->addWidget(label_9, 0, 1, 1, 1);
 
-
         gridLayout->addLayout(gridLayout_3, 0, 0, 1, 1);
 
         gridLayout_5 = new QGridLayout();
@@ -304,9 +301,7 @@ public:
 
         verticalLayout_2->addWidget(loadButton);
 
-
         gridLayout_5->addLayout(verticalLayout_2, 0, 3, 1, 1);
-
 
         gridLayout->addLayout(gridLayout_5, 1, 0, 1, 1);
 
@@ -332,7 +327,6 @@ public:
 
         horizontalLayout_2->addWidget(pushButtonResetCalka);
 
-
         gridLayout->addLayout(horizontalLayout_2, 2, 0, 1, 1);
 
         MainWindow->setCentralWidget(centralwidget);
@@ -351,7 +345,8 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "UAR - PROJEKT", nullptr));
+        MainWindow->setWindowTitle(
+            QCoreApplication::translate("MainWindow", "UAR - PROJEKT", nullptr));
         label_5->setText(QCoreApplication::translate("MainWindow", "k", nullptr));
         label_6->setText(QCoreApplication::translate("MainWindow", "Ti", nullptr));
         label_7->setText(QCoreApplication::translate("MainWindow", "Td", nullptr));
@@ -366,16 +361,21 @@ public:
         saveButton->setText(QCoreApplication::translate("MainWindow", "ZAPISZ", nullptr));
         loadButton->setText(QCoreApplication::translate("MainWindow", "WGRAJ", nullptr));
         pushButtonARX->setText(QCoreApplication::translate("MainWindow", "ARX", nullptr));
-        comboBoxSposobCalkowania->setItemText(0, QCoreApplication::translate("MainWindow", "Ti poza ca\305\202k\304\205", nullptr));
-        comboBoxSposobCalkowania->setItemText(1, QCoreApplication::translate("MainWindow", "Ti pod ca\305\202k\304\205", nullptr));
+        comboBoxSposobCalkowania->setItemText(
+            0, QCoreApplication::translate("MainWindow", "Ti poza ca\305\202k\304\205", nullptr));
+        comboBoxSposobCalkowania->setItemText(
+            1, QCoreApplication::translate("MainWindow", "Ti pod ca\305\202k\304\205", nullptr));
 
-        pushButtonResetCalka->setText(QCoreApplication::translate("MainWindow", "Resetuj cz\304\231\305\233\304\207 ca\305\202kuj\304\205c\304\205", nullptr));
+        pushButtonResetCalka->setText(QCoreApplication::translate(
+            "MainWindow",
+            "Resetuj cz\304\231\305\233\304\207 ca\305\202kuj\304\205c\304\205",
+            nullptr));
     } // retranslateUi
-
 };
 
 namespace Ui {
-    class MainWindow: public Ui_MainWindow {};
+class MainWindow : public Ui_MainWindow
+{};
 } // namespace Ui
 
 QT_END_NAMESPACE

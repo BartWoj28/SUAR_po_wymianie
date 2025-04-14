@@ -2,21 +2,19 @@
 #define _USE_MATH_DEFINES
 
 #include <cmath>
-#include <vector>
 #include <deque>
+#include <vector>
 
-enum class TypSygnalu {
-    SkokJednostkowy,
-    Prostokatny,
-    Sinusoidalny
-};
-class Generator {
+enum class TypSygnalu { SkokJednostkowy, Prostokatny, Sinusoidalny };
+class Generator
+{
 private:
     TypSygnalu typ;
     double amplituda;
     double okres;
     double wypelnienie;
     int czasAktywacji;
+
 public:
     Generator(TypSygnalu typ, double amplituda, double okres, double wypelnienie, int czasAktywacji);
     double generuj(int krok);
