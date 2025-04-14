@@ -32,13 +32,20 @@
    <string>UAR - PROJEKT</string>
   </property>
   <property name="layoutDirection">
-   <enum>Qt::LayoutDirection::LeftToRight</enum>
+   <enum>Qt::LeftToRight</enum>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1" rowspan="3" colspan="2">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+     </layout>
+    </item>
     <item row="3" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="1">
@@ -50,7 +57,7 @@
          <string>k</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -69,7 +76,7 @@
          <string>Ti</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -145,39 +152,26 @@
          </size>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::LayoutDirection::LeftToRight</enum>
+         <enum>Qt::LeftToRight</enum>
         </property>
         <property name="autoFillBackground">
          <bool>true</bool>
         </property>
         <property name="frameShape">
-         <enum>QFrame::Shape::NoFrame</enum>
+         <enum>QFrame::NoFrame</enum>
         </property>
         <property name="text">
          <string>Td</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
      </layout>
     </item>
-    <item row="3" column="1" rowspan="2">
-     <layout class="QVBoxLayout" name="verticalLayoutPID"/>
-    </item>
-    <item row="3" column="2" rowspan="2">
-     <layout class="QVBoxLayout" name="verticalLayoutUchyb"/>
-    </item>
-    <item row="0" column="1" rowspan="3" colspan="2">
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="sizeConstraint">
-       <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
-      </property>
-     </layout>
-    </item>
     <item row="4" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0">
       <item>
        <widget class="QPushButton" name="startButton">
         <property name="minimumSize">
@@ -242,6 +236,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item row="0" column="0">
@@ -283,7 +284,7 @@
          </size>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::LayoutDirection::LeftToRight</enum>
+         <enum>Qt::LeftToRight</enum>
         </property>
         <property name="autoFillBackground">
          <bool>true</bool>
@@ -295,7 +296,7 @@
          <string>AMPLITUDA</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -314,7 +315,7 @@
          <string>WYPELNIENIE</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -374,16 +375,19 @@
          <string>OKRES</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
      </layout>
     </item>
+    <item row="3" column="2" rowspan="2">
+     <layout class="QVBoxLayout" name="verticalLayoutUchyb"/>
+    </item>
     <item row="1" column="0">
      <layout class="QGridLayout" name="gridLayout_5">
       <property name="sizeConstraint">
-       <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
+       <enum>QLayout::SetMinimumSize</enum>
       </property>
       <item row="0" column="2">
        <widget class="QSpinBox" name="spinBoxInterwal">
@@ -429,7 +433,7 @@
          </size>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::LayoutDirection::RightToLeft</enum>
+         <enum>Qt::RightToLeft</enum>
         </property>
         <property name="autoFillBackground">
          <bool>true</bool>
@@ -438,7 +442,7 @@
          <string>INTERWAŁ</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -511,6 +515,9 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item row="3" column="1" rowspan="2">
+     <layout class="QVBoxLayout" name="verticalLayoutPID"/>
     </item>
    </layout>
   </widget>
