@@ -12,6 +12,7 @@ CONFIG += c++17
 SOURCES += \
     Generator.cpp \
     ModelARX.cpp \
+    ModelDialog.cpp \
     RegulatorPID.cpp \
     SprzezenieZwrotne.cpp \
     UkladRegulacji.cpp \
@@ -21,12 +22,14 @@ SOURCES += \
 HEADERS += \
     Generator.h \
     ModelARX.h \
+    ModelDialog.h \
     RegulatorPID.h \
     SprzezenieZwrotne.h \
     UkladRegulacji.h \
     mainwindow.h
 
 FORMS += \
+    ModelDialog.ui \
     mainwindow.ui
 
 # Default rules for deployment.
