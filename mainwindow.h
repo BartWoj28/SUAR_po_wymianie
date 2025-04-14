@@ -47,7 +47,7 @@ private slots:
     void on_comboBoxSposobCalkowania_currentIndexChanged(int index);
 
 private:
-    int test_zmiany = 0; /////////////////////////
+    int test_zmiany = 1; /////////////////////////
     int krok = 0;
     Ui::MainWindow *ui;
     UkladRegulacji *uklad;
