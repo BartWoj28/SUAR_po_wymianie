@@ -41,7 +41,7 @@ void DialogConnection::on_wybor_currentTextChanged(const QString &arg1)
 
 void DialogConnection::on_DialogConnection_accepted()
 {
-    if(czy_adres)adres=QString::number(ui->adres1->value())+"."+QString::number(ui->adres2->value())+"."+QString::number(ui->adres3->value())+QString::number(ui->adres4->value());
+    if(czy_adres)adres=QString::number(ui->adres1->value())+"."+QString::number(ui->adres2->value())+"."+QString::number(ui->adres3->value())+"."+QString::number(ui->adres4->value());
     port=ui->port->value();
     czyPolacz=true;
 }
