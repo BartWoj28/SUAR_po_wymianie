@@ -2,52 +2,28 @@
 #include "ui_MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-    , uklad(nullptr)
-    , timer(new QTimer(this))
-    , typSygnalu(TypSygnalu::SkokJednostkowy)
-    , zaklocenieWlaczone(false)
-    , poziomZaklocenia(0.0)
+    : QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    uklad(nullptr),
+    timer(new QTimer(this)),
+    typSygnalu(TypSygnalu::SkokJednostkowy),
+    zaklocenieWlaczone(false),
+    poziomZaklocenia(0.0)
 {
     ui->setupUi(this);
     connect(timer, &QTimer::timeout, this, &MainWindow::aktualizujSymulacje);
     ui->signalTypeComboBox->addItem("Skok jednostkowy");
     ui->signalTypeComboBox->addItem("Sygnał prostokątny");
     ui->signalTypeComboBox->addItem("Sygnał sinusoidalny");
-    connect(ui->signalTypeComboBox,
-            QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this,
-            &MainWindow::on_signalTypeComboBox_currentIndexChanged);
-    connect(ui->spinBoxInterwal,
-            &QSpinBox::editingFinished,
-            this,
-            &MainWindow::on_spinBoxInterwal_editingFinished);
-    connect(ui->spinBoxK,
-            &QDoubleSpinBox::editingFinished,
-            this,
-            &MainWindow::on_spinBoxK_editingFinished);
-    connect(ui->spinBoxTi,
-            &QDoubleSpinBox::editingFinished,
-            this,
-            &MainWindow::on_spinBoxTi_editingFinished);
-    connect(ui->spinBoxTd,
-            &QDoubleSpinBox::editingFinished,
-            this,
-            &MainWindow::on_spinBoxTd_editingFinished);
+    connect(ui->signalTypeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::on_signalTypeComboBox_currentIndexChanged);
+    connect(ui->spinBoxInterwal, &QSpinBox::editingFinished, this, &MainWindow::on_spinBoxInterwal_editingFinished);
+    connect(ui->spinBoxK, &QDoubleSpinBox::editingFinished, this, &MainWindow::on_spinBoxK_editingFinished);
+    connect(ui->spinBoxTi, &QDoubleSpinBox::editingFinished, this, &MainWindow::on_spinBoxTi_editingFinished);
+    connect(ui->spinBoxTd, &QDoubleSpinBox::editingFinished, this, &MainWindow::on_spinBoxTd_editingFinished);
 
-    connect(ui->spinBoxAmplituda,
-            &QDoubleSpinBox::editingFinished,
-            this,
-            &MainWindow::on_spinBoxAmplituda_editingFinished);
-    connect(ui->spinBoxOkres,
-            &QDoubleSpinBox::editingFinished,
-            this,
-            &MainWindow::on_spinBoxOkres_editingFinished);
-    connect(ui->spinBoxWypelnienie,
-            &QDoubleSpinBox::editingFinished,
-            this,
-            &MainWindow::on_spinBoxWypelnienie_editingFinished);
+    connect(ui->spinBoxAmplituda, &QDoubleSpinBox::editingFinished, this, &MainWindow::on_spinBoxAmplituda_editingFinished);
+    connect(ui->spinBoxOkres, &QDoubleSpinBox::editingFinished, this, &MainWindow::on_spinBoxOkres_editingFinished);
+    connect(ui->spinBoxWypelnienie, &QDoubleSpinBox::editingFinished, this, &MainWindow::on_spinBoxWypelnienie_editingFinished);
 
     connect(ui->saveButton, &QPushButton::clicked, this, &MainWindow::saveConfiguration);
     connect(ui->loadButton, &QPushButton::clicked, this, &MainWindow::loadConfiguration);
@@ -134,10 +110,18 @@ MainWindow::MainWindow(QWidget *parent)
     chartViewUchyb = new QChartView(chartUchyb);
     chartViewUchyb->setRenderHint(QPainter::Antialiasing);
     ui->verticalLayoutUchyb->addWidget(chartViewUchyb);
+
+
+    //connect(&socket_klient,SIGNAL(connected()),this,SLOT(slot_connected()));
+   // connect(&socket_klient,SIGNAL(disconnected()),this,SIGNAL(Disconnected()));
+
+   // connect(&m_server,SIGNAL(newConnection),this,SLOT(slot_connect_client()));
+
+connect(m_serwer,SIGNAL(newClientConnected(QString)), this,SLOT(slot_clientConnected(QString)));
+ connect(m_serwer,SIGNAL(clientDisconnetced()),this,SLOT(slot_clientDisconnected()));
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
 
@@ -158,18 +142,7 @@ void MainWindow::on_startButton_clicked()
     std::vector<double> vecB(wspBstart.begin(), wspBstart.end());
     bool stan = zaklocenieStart != 0.0;
 
-    uklad = new UkladRegulacji(vecA,
-                               vecB,
-                               opoznienieStart,
-                               stan,
-                               zaklocenieStart,
-                               k,
-                               ti,
-                               td,
-                               typSygnalu,
-                               amplituda,
-                               okres,
-                               wypelnienie);
+    uklad = new UkladRegulacji(vecA, vecB, opoznienieStart, stan, zaklocenieStart, k, ti, td, typSygnalu, amplituda, okres, wypelnienie);
     ui->startButton->hide();
 }
 
@@ -201,14 +174,12 @@ void MainWindow::aktualizujSymulacje()
         axisX->setRange(minX, maxX);
         axisXPID->setRange(minX, maxX);
         axisXUchyb->setRange(minX, maxX);
-        auto adjustYAxis = [minX, maxX](QLineSeries *series, QValueAxis *axisY) {
+        auto adjustYAxis = [minX, maxX](QLineSeries* series, QValueAxis* axisY) {
             double minY = std::numeric_limits<double>::max();
             double maxY = std::numeric_limits<double>::lowest();
-            const auto &points = series->pointsVector();
-            for (int i = std::max(0, static_cast<int>(points.size()) - windowSize);
-                 i < points.size();
-                 ++i) {
-                const auto &point = points[i];
+            const auto& points = series->pointsVector();
+            for (int i = std::max(0, static_cast<int>(points.size()) - windowSize); i < points.size(); ++i) {
+                const auto& point = points[i];
                 if (point.x() >= minX && point.x() <= maxX) {
                     minY = std::min(minY, point.y());
                     maxY = std::max(maxY, point.y());
@@ -258,8 +229,8 @@ void MainWindow::on_resetButton_clicked()
         axisXPID->setRange(0, 50);
         axisYPID->setRange(-10, 10);
         seriesUchyb->clear();
-        axisXUchyb->setRange(0, 50);
-        axisYUchyb->setRange(-10, 10);
+        axisXUchyb->setRange(0,50);
+        axisYUchyb->setRange(-10,10);
     }
     delete uklad;
     uklad = nullptr;
@@ -277,8 +248,7 @@ void MainWindow::on_resetButton_clicked()
     zaklocenieStart = 0.0;
 }
 
-void MainWindow::on_pushButtonARX_clicked()
-{
+void MainWindow::on_pushButtonARX_clicked() {
     ModelDialog dialog(this);
     dialog.ustawPoczatkoweWartosci(wspAstart, wspBstart, opoznienieStart, zaklocenieStart);
     dialog.setZaklocenieAktywne(zaklocenieStart > 0.0);
@@ -302,100 +272,77 @@ void MainWindow::on_pushButtonARX_clicked()
 void MainWindow::on_signalTypeComboBox_currentIndexChanged(int index)
 {
     switch (index) {
-    case 0:
-        typSygnalu = TypSygnalu::SkokJednostkowy;
-        break;
-    case 1:
-        typSygnalu = TypSygnalu::Prostokatny;
-        break;
-    case 2:
-        typSygnalu = TypSygnalu::Sinusoidalny;
-        break;
-    default:
-        typSygnalu = TypSygnalu::SkokJednostkowy;
-        break;
+    case 0: typSygnalu = TypSygnalu::SkokJednostkowy; break;
+    case 1: typSygnalu = TypSygnalu::Prostokatny; break;
+    case 2: typSygnalu = TypSygnalu::Sinusoidalny; break;
+    default: typSygnalu = TypSygnalu::SkokJednostkowy; break;
     }
     if (uklad) {
         uklad->getGenerator().setTypSygnalu(typSygnalu);
     }
 }
 
-void MainWindow::on_pushButtonResetCalka_clicked()
-{
+void MainWindow::on_pushButtonResetCalka_clicked() {
     if (uklad) {
         uklad->getRegulator().resetCzescI();
     }
 }
 
-void MainWindow::on_comboBoxSposobCalkowania_currentIndexChanged(int index)
-{
+void MainWindow::on_comboBoxSposobCalkowania_currentIndexChanged(int index) {
     if (uklad) {
         bool poza = (index == 0);
         uklad->getRegulator().setTiPozaCalka(poza);
     }
 }
 
-void MainWindow::on_spinBoxK_editingFinished()
-{
+void MainWindow::on_spinBoxK_editingFinished() {
     if (uklad) {
         uklad->getRegulator().setK(ui->spinBoxK->value());
     }
 }
 
-void MainWindow::on_spinBoxTi_editingFinished()
-{
+void MainWindow::on_spinBoxTi_editingFinished() {
     if (uklad) {
         uklad->getRegulator().setTi(ui->spinBoxTi->value());
     }
 }
 
-void MainWindow::on_spinBoxTd_editingFinished()
-{
+void MainWindow::on_spinBoxTd_editingFinished() {
     if (uklad) {
         uklad->getRegulator().setTd(ui->spinBoxTd->value());
     }
 }
 
-void MainWindow::on_spinBoxAmplituda_editingFinished()
-{
+void MainWindow::on_spinBoxAmplituda_editingFinished() {
     if (uklad) {
         uklad->getGenerator().setAmplituda(ui->spinBoxAmplituda->value());
     }
 }
 
-void MainWindow::on_spinBoxOkres_editingFinished()
-{
+void MainWindow::on_spinBoxOkres_editingFinished() {
     if (uklad) {
         uklad->getGenerator().setOkres(ui->spinBoxOkres->value());
     }
 }
 
-void MainWindow::on_spinBoxWypelnienie_editingFinished()
-{
+void MainWindow::on_spinBoxWypelnienie_editingFinished() {
     if (uklad) {
         uklad->getGenerator().setWypelnienie(ui->spinBoxWypelnienie->value());
     }
 }
 
-void MainWindow::on_spinBoxInterwal_editingFinished()
-{
+void MainWindow::on_spinBoxInterwal_editingFinished() {
     if (timer->isActive()) {
         timer->setInterval(ui->spinBoxInterwal->value());
     }
 }
 
-void MainWindow::saveConfiguration()
-{
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                                    "Zapisz konfigurację",
-                                                    "",
-                                                    "Pliki tekstowe (*.txt)");
-    if (fileName.isEmpty())
-        return;
+void MainWindow::saveConfiguration() {
+    QString fileName = QFileDialog::getSaveFileName(this, "Zapisz konfigurację", "", "Pliki tekstowe (*.txt)");
+    if (fileName.isEmpty()) return;
 
     QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        return;
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
 
     QTextStream out(&file);
     out << "Amplituda=" << ui->spinBoxAmplituda->value() << "\n";
@@ -417,18 +364,12 @@ void MainWindow::saveConfiguration()
     file.close();
 }
 
-void MainWindow::loadConfiguration()
-{
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    "Wczytaj konfigurację",
-                                                    "",
-                                                    "Pliki tekstowe (*.txt)");
-    if (fileName.isEmpty())
-        return;
+void MainWindow::loadConfiguration() {
+    QString fileName = QFileDialog::getOpenFileName(this, "Wczytaj konfigurację", "", "Pliki tekstowe (*.txt)");
+    if (fileName.isEmpty()) return;
 
     QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return;
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return;
 
     QTextStream in(&file);
     while (!in.atEnd()) {
@@ -440,69 +381,175 @@ void MainWindow::loadConfiguration()
 
             if (key == "Amplituda") {
                 ui->spinBoxAmplituda->setValue(value);
-                if (uklad)
-                    uklad->getGenerator().setAmplituda(value);
-            } else if (key.startsWith("A")) {
+                if (uklad) uklad->getGenerator().setAmplituda(value);
+            }
+            else if (key.startsWith("A")) {
                 bool ok;
                 int index = key.mid(1).toInt(&ok) - 1;
                 if (ok && index >= 0 && index < wspAstart.size())
                     wspAstart[index] = value;
-            } else if (key.startsWith("B")) {
+            }
+            else if (key.startsWith("B")) {
                 bool ok;
                 int index = key.mid(1).toInt(&ok) - 1;
                 if (ok && index >= 0 && index < wspBstart.size())
                     wspBstart[index] = value;
-            } else if (key == "K") {
+            }
+            else if (key == "K") {
                 ui->spinBoxK->setValue(value);
-                if (uklad)
-                    uklad->getRegulator().setK(value);
-            } else if (key == "Ti") {
+                if (uklad) uklad->getRegulator().setK(value);
+            }
+            else if (key == "Ti") {
                 ui->spinBoxTi->setValue(value);
-                if (uklad)
-                    uklad->getRegulator().setTi(value);
-            } else if (key == "Td") {
+                if (uklad) uklad->getRegulator().setTi(value);
+            }
+            else if (key == "Td") {
                 ui->spinBoxTd->setValue(value);
-                if (uklad)
-                    uklad->getRegulator().setTd(value);
-            } else if (key == "Interwal") {
+                if (uklad) uklad->getRegulator().setTd(value);
+            }
+            else if (key == "Interwal") {
                 ui->spinBoxInterwal->setValue(static_cast<int>(value));
-                if (timer->isActive())
-                    timer->setInterval(static_cast<int>(value));
-            } else if (key == "Okres") {
+                if (timer->isActive()) timer->setInterval(static_cast<int>(value));
+            }
+            else if (key == "Okres") {
                 ui->spinBoxOkres->setValue(value);
-                if (uklad)
-                    uklad->getGenerator().setOkres(value);
-            } else if (key == "Wypelnienie") {
+                if (uklad) uklad->getGenerator().setOkres(value);
+            }
+            else if (key == "Wypelnienie") {
                 ui->spinBoxWypelnienie->setValue(value);
-                if (uklad)
-                    uklad->getGenerator().setWypelnienie(value);
-            } else if (key == "TypSygnalu") {
+                if (uklad) uklad->getGenerator().setWypelnienie(value);
+            }
+            else if (key == "TypSygnalu") {
                 int index = static_cast<int>(value);
                 ui->signalTypeComboBox->setCurrentIndex(index);
                 if (uklad) {
                     switch (index) {
-                    case 0:
-                        typSygnalu = TypSygnalu::SkokJednostkowy;
-                        break;
-                    case 1:
-                        typSygnalu = TypSygnalu::Prostokatny;
-                        break;
-                    case 2:
-                        typSygnalu = TypSygnalu::Sinusoidalny;
-                        break;
-                    default:
-                        typSygnalu = TypSygnalu::SkokJednostkowy;
-                        break;
+                    case 0: typSygnalu = TypSygnalu::SkokJednostkowy; break;
+                    case 1: typSygnalu = TypSygnalu::Prostokatny; break;
+                    case 2: typSygnalu = TypSygnalu::Sinusoidalny; break;
+                    default: typSygnalu = TypSygnalu::SkokJednostkowy; break;
                     }
                     uklad->getGenerator().setTypSygnalu(typSygnalu);
                 }
-            } else if (key == "Zaklocenie") {
+            }
+            else if (key == "Zaklocenie") {
                 zaklocenieStart = value;
-            } else if (key == "Opoznienie") {
+            }
+            else if (key == "Opoznienie") {
                 opoznienieStart = static_cast<int>(value);
             }
         }
     }
 
     file.close();
+}
+
+
+
+
+
+void MainWindow::on_btnRozlacz_clicked()
+{
+    if(m_klient!=nullptr) {m_klient->Rozlacz(); m_klient=nullptr;}
+    if(m_serwer!=nullptr){
+        m_serwer->stopNasluch();
+        delete m_serwer;
+        ui->btnRozlacz->setEnabled(false);
+        ui->lblStatus->setText("Stop");
+    }
+
+    ui->comboBoxSposobCalkowania->setEnabled(true);
+    ui->pushButtonResetCalka->setEnabled(true);
+    ui->spinBoxK->setEnabled(true);
+    ui->spinBoxTd->setEnabled(true);
+    ui->spinBoxTi->setEnabled(true);
+    ui->pushButtonARX->setEnabled(true);
+
+}
+
+
+
+
+void MainWindow::on_btnPolaczenie_clicked()
+{
+    dialogPolacz= new DialogConnection;
+    dialogPolacz->exec();
+    if(dialogPolacz->czyPolacz){
+
+        if(dialogPolacz->czy_adres){
+            ResetKlient();
+            m_klient->Polacz(dialogPolacz->adres,dialogPolacz->port);
+
+        }
+        else {
+            ResetSerwer();
+            m_serwer->startNasluch(dialogPolacz->port);
+            if(m_serwer->czyNasluch())ui->lblStatus->setText("Serwer:"+QString::number(dialogPolacz->port));
+            ui->btnRozlacz->setEnabled(true);
+        }
+
+    }
+   // if(dialogPolacz->czy_adres)
+     delete dialogPolacz;
+}
+
+
+
+void MainWindow::ResetKlient(){
+if(m_klient != nullptr) {
+ m_klient->Rozlacz();
+ delete m_klient;
+}
+
+m_klient = new TCPClient(this);
+connect(m_klient,SIGNAL(connected(QString,int)),this,SLOT(slot_connected(QString,int)));
+connect(m_klient,SIGNAL(disconnected()),this,SLOT(slot_disconnected()));
+
+
+}
+
+void MainWindow::ResetSerwer(){
+if(m_serwer != nullptr) {
+ m_serwer->stopNasluch();
+delete m_serwer;
+ }
+ m_serwer = new TCPServer(this);
+ connect(m_serwer,SIGNAL(ClientConnected(QString)),this,SLOT(slot_clientConnected(QString)));
+ connect(m_serwer,SIGNAL(ClientDisconnected()),this,SLOT(slot_clientDisconnected()));
+
+}
+
+void MainWindow::slot_clientConnected(QString adr){
+
+    ui->lblStatus->setText("ARX:"+adr);
+    ui->pushButtonARX->setEnabled(false);
+}
+
+void MainWindow::slot_clientDisconnected()
+{
+    ui->lblStatus->setText("Rozłączono");
+    ui->pushButtonARX->setEnabled(true);
+}
+
+void MainWindow::slot_connected(QString adr, int port){
+
+    ui->lblStatus->setText("Host:"+adr+":"+QString::number(port));
+    ui->btnRozlacz->setEnabled(true);
+    ui->comboBoxSposobCalkowania->setEnabled(false);
+    ui->pushButtonResetCalka->setEnabled(false);
+    ui->spinBoxK->setEnabled(false);
+    ui->spinBoxTd->setEnabled(false);
+    ui->spinBoxTi->setEnabled(false);
+}
+
+void MainWindow::slot_disconnected(){
+
+    ui->lblStatus->setText("Rozłączono");
+    ui->btnRozlacz->setEnabled(false);
+
+    ui->comboBoxSposobCalkowania->setEnabled(true);
+    ui->pushButtonResetCalka->setEnabled(true);
+    ui->spinBoxK->setEnabled(true);
+    ui->spinBoxTd->setEnabled(true);
+    ui->spinBoxTi->setEnabled(true);
 }

@@ -1,7 +1,6 @@
 #pragma once
 
-class RegulatorPID
-{
+class RegulatorPID {
 private:
     double k, ti, td;
     double suma_uchybu;
@@ -10,7 +9,6 @@ private:
     double wyj_i;
     double wyj_d;
     bool tiPozaCalka = true;
-
 public:
     RegulatorPID(double k, double ti, double td);
     ~RegulatorPID();

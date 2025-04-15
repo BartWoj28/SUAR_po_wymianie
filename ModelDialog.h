@@ -20,10 +20,7 @@ public:
     double getZaklocenie() const;
     bool isZaklocenieAktywne() const;
     void setZaklocenieAktywne(bool aktywne);
-    void ustawPoczatkoweWartosci(const QVector<double> &wspA,
-                                 const QVector<double> &wspB,
-                                 int opoznienie,
-                                 double zaklocenie);
+    void ustawPoczatkoweWartosci(const QVector<double>& wspA, const QVector<double>& wspB, int opoznienie, double zaklocenie);
 
 private:
     Ui::ModelDialog *ui;

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ModelDialog.ui'
 **
-** Created by: Qt User Interface Compiler version 6.6.3
+** Created by: Qt User Interface Compiler version 6.5.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -79,6 +79,7 @@ public:
 
         verticalLayout->addWidget(labelA3);
 
+
         horizontalLayout->addLayout(verticalLayout);
 
         verticalLayout_3 = new QVBoxLayout();
@@ -107,6 +108,7 @@ public:
 
         verticalLayout_3->addWidget(spinBoxA3);
 
+
         horizontalLayout->addLayout(verticalLayout_3);
 
         verticalLayout_2 = new QVBoxLayout();
@@ -125,6 +127,7 @@ public:
         labelB3->setObjectName("labelB3");
 
         verticalLayout_2->addWidget(labelB3);
+
 
         horizontalLayout->addLayout(verticalLayout_2);
 
@@ -148,7 +151,9 @@ public:
 
         verticalLayout_4->addWidget(spinBoxB3);
 
+
         horizontalLayout->addLayout(verticalLayout_4);
+
 
         verticalLayout_6->addLayout(horizontalLayout);
 
@@ -168,6 +173,7 @@ public:
 
         horizontalLayout_2->addWidget(spinBoxOpoznienie);
 
+
         verticalLayout_5->addLayout(horizontalLayout_2);
 
         horizontalLayout_3 = new QHBoxLayout();
@@ -184,27 +190,23 @@ public:
 
         horizontalLayout_3->addWidget(doubleSpinBoxZaklocenie);
 
+
         verticalLayout_5->addLayout(horizontalLayout_3);
+
 
         verticalLayout_6->addLayout(verticalLayout_5);
 
         buttonBox = new QDialogButtonBox(ModelDialog);
         buttonBox->setObjectName("buttonBox");
         buttonBox->setOrientation(Qt::Orientation::Horizontal);
-        buttonBox->setStandardButtons(QDialogButtonBox::StandardButton::Cancel
-                                      | QDialogButtonBox::StandardButton::Ok);
+        buttonBox->setStandardButtons(QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok);
 
         verticalLayout_6->addWidget(buttonBox);
 
+
         retranslateUi(ModelDialog);
-        QObject::connect(buttonBox,
-                         &QDialogButtonBox::accepted,
-                         ModelDialog,
-                         qOverload<>(&QDialog::accept));
-        QObject::connect(buttonBox,
-                         &QDialogButtonBox::rejected,
-                         ModelDialog,
-                         qOverload<>(&QDialog::reject));
+        QObject::connect(buttonBox, &QDialogButtonBox::accepted, ModelDialog, qOverload<>(&QDialog::accept));
+        QObject::connect(buttonBox, &QDialogButtonBox::rejected, ModelDialog, qOverload<>(&QDialog::reject));
 
         QMetaObject::connectSlotsByName(ModelDialog);
     } // setupUi
@@ -218,16 +220,14 @@ public:
         labelB1->setText(QCoreApplication::translate("ModelDialog", "B1", nullptr));
         labelB2->setText(QCoreApplication::translate("ModelDialog", "B2", nullptr));
         labelB3->setText(QCoreApplication::translate("ModelDialog", "B3", nullptr));
-        labelOpoznienie->setText(
-            QCoreApplication::translate("ModelDialog", "Op\303\263\305\272nienie:", nullptr));
-        checkBoxZaklocenie->setText(
-            QCoreApplication::translate("ModelDialog", "Zak\305\202\303\263cenie:", nullptr));
+        labelOpoznienie->setText(QCoreApplication::translate("ModelDialog", "Op\303\263\305\272nienie:", nullptr));
+        checkBoxZaklocenie->setText(QCoreApplication::translate("ModelDialog", "Zak\305\202\303\263cenie:", nullptr));
     } // retranslateUi
+
 };
 
 namespace Ui {
-class ModelDialog : public Ui_ModelDialog
-{};
+    class ModelDialog: public Ui_ModelDialog {};
 } // namespace Ui
 
 QT_END_NAMESPACE

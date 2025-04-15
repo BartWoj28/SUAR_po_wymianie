@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 QT += charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -16,8 +16,11 @@ SOURCES += \
     RegulatorPID.cpp \
     SprzezenieZwrotne.cpp \
     UkladRegulacji.cpp \
+    dialogconnection.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    tcpclient.cpp \
+    tcpserver.cpp
 
 HEADERS += \
     Generator.h \
@@ -26,10 +29,14 @@ HEADERS += \
     RegulatorPID.h \
     SprzezenieZwrotne.h \
     UkladRegulacji.h \
-    mainwindow.h
+    dialogconnection.h \
+    mainwindow.h \
+    tcpclient.h \
+    tcpserver.h
 
 FORMS += \
     ModelDialog.ui \
+    dialogconnection.ui \
     mainwindow.ui
 
 # Default rules for deployment.
