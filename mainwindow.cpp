@@ -450,10 +450,11 @@ void MainWindow::loadConfiguration() {
 
 void MainWindow::on_btnRozlacz_clicked()
 {
-    if(m_klient!=nullptr) {m_klient->Rozlacz(); m_klient=nullptr;}
+    if(m_klient!=nullptr) {m_klient->Rozlacz(); delete m_klient; m_klient=nullptr;}
     if(m_serwer!=nullptr){
         m_serwer->stopNasluch();
         delete m_serwer;
+        m_serwer=nullptr;
         ui->btnRozlacz->setEnabled(false);
         ui->lblStatus->setText("Stop");
     }
