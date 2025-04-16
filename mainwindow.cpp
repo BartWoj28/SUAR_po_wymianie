@@ -450,7 +450,7 @@ void MainWindow::loadConfiguration() {
 
 void MainWindow::on_btnRozlacz_clicked()
 {
-    if(m_klient!=nullptr) {m_klient->Rozlacz(); delete m_klient; m_klient=nullptr;}
+    if(m_klient!=nullptr) {m_klient->Rozlacz(); m_klient=nullptr;}
     if(m_serwer!=nullptr){
         m_serwer->stopNasluch();
         delete m_serwer;
@@ -466,6 +466,13 @@ void MainWindow::on_btnRozlacz_clicked()
     ui->spinBoxTi->setEnabled(true);
     ui->pushButtonARX->setEnabled(true);
 
+    ui->spinBoxAmplituda->setEnabled(true);
+    ui->spinBoxOkres->setEnabled(true);
+    ui->spinBoxWypelnienie->setEnabled(true);
+    ui->signalTypeComboBox->setEnabled(true);
+
+    ui->wznowButton->setEnabled(true);
+    ui->stopButton->setEnabled(true);
 }
 
 
@@ -541,6 +548,14 @@ void MainWindow::slot_connected(QString adr, int port){
     ui->spinBoxK->setEnabled(false);
     ui->spinBoxTd->setEnabled(false);
     ui->spinBoxTi->setEnabled(false);
+
+    ui->spinBoxAmplituda->setEnabled(false);
+    ui->spinBoxOkres->setEnabled(false);
+    ui->spinBoxWypelnienie->setEnabled(false);
+    ui->signalTypeComboBox->setEnabled(false);
+
+    ui->wznowButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
 }
 
 void MainWindow::slot_disconnected(){
@@ -553,4 +568,13 @@ void MainWindow::slot_disconnected(){
     ui->spinBoxK->setEnabled(true);
     ui->spinBoxTd->setEnabled(true);
     ui->spinBoxTi->setEnabled(true);
+
+    ui->spinBoxAmplituda->setEnabled(true);
+    ui->spinBoxOkres->setEnabled(true);
+    ui->spinBoxWypelnienie->setEnabled(true);
+    ui->signalTypeComboBox->setEnabled(true);
+
+    ui->wznowButton->setEnabled(true);
+    ui->stopButton->setEnabled(true);
+
 }
