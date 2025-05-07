@@ -61,7 +61,7 @@ public:
         DialogConnection->resize(400, 300);
         verticalLayout_3 = new QVBoxLayout(DialogConnection);
         verticalLayout_3->setObjectName("verticalLayout_3");
-        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         verticalLayout_3->addItem(verticalSpacer);
 
@@ -100,7 +100,7 @@ public:
 
         label = new QLabel(DialogConnection);
         label->setObjectName("label");
-        label->setAlignment(Qt::AlignCenter);
+        label->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
         horizontalLayout->addWidget(label);
 
@@ -112,7 +112,7 @@ public:
 
         label_2 = new QLabel(DialogConnection);
         label_2->setObjectName("label_2");
-        label_2->setAlignment(Qt::AlignCenter);
+        label_2->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
         horizontalLayout->addWidget(label_2);
 
@@ -124,7 +124,7 @@ public:
 
         label_3 = new QLabel(DialogConnection);
         label_3->setObjectName("label_3");
-        label_3->setAlignment(Qt::AlignCenter);
+        label_3->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
         horizontalLayout->addWidget(label_3);
 
@@ -139,11 +139,13 @@ public:
 
         horizontalLayout->addItem(horizontalSpacer_3);
 
+
         verticalLayout->addLayout(horizontalLayout);
+
 
         verticalLayout_3->addLayout(verticalLayout);
 
-        verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+        verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         verticalLayout_3->addItem(verticalSpacer_2);
 
@@ -166,6 +168,7 @@ public:
         port->setMaximum(65535);
 
         verticalLayout_2->addWidget(port);
+
 
         horizontalLayout_2->addLayout(verticalLayout_2);
 
@@ -192,14 +195,14 @@ public:
 
         verticalLayout_3->addLayout(horizontalLayout_2);
 
-        verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+        verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         verticalLayout_3->addItem(verticalSpacer_3);
 
         buttonBox = new QDialogButtonBox(DialogConnection);
         buttonBox->setObjectName("buttonBox");
-        buttonBox->setOrientation(Qt::Horizontal);
-        buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
+        buttonBox->setOrientation(Qt::Orientation::Horizontal);
+        buttonBox->setStandardButtons(QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok);
 
         verticalLayout_3->addWidget(buttonBox);
 
@@ -211,22 +214,15 @@ public:
         verticalLayout_3->setStretch(5, 2);
 
         retranslateUi(DialogConnection);
-        QObject::connect(buttonBox,
-                         &QDialogButtonBox::accepted,
-                         DialogConnection,
-                         qOverload<>(&QDialog::accept));
-        QObject::connect(buttonBox,
-                         &QDialogButtonBox::rejected,
-                         DialogConnection,
-                         qOverload<>(&QDialog::reject));
+        QObject::connect(buttonBox, &QDialogButtonBox::accepted, DialogConnection, qOverload<>(&QDialog::accept));
+        QObject::connect(buttonBox, &QDialogButtonBox::rejected, DialogConnection, qOverload<>(&QDialog::reject));
 
         QMetaObject::connectSlotsByName(DialogConnection);
     } // setupUi
 
     void retranslateUi(QDialog *DialogConnection)
     {
-        DialogConnection->setWindowTitle(
-            QCoreApplication::translate("DialogConnection", "Dialog", nullptr));
+        DialogConnection->setWindowTitle(QCoreApplication::translate("DialogConnection", "Dialog", nullptr));
         label_4->setText(QCoreApplication::translate("DialogConnection", "Adres", nullptr));
         label->setText(QCoreApplication::translate("DialogConnection", ".", nullptr));
         label_2->setText(QCoreApplication::translate("DialogConnection", ".", nullptr));
@@ -236,11 +232,11 @@ public:
         wybor->setItemText(1, QCoreApplication::translate("DialogConnection", "serwer", nullptr));
 
     } // retranslateUi
+
 };
 
 namespace Ui {
-class DialogConnection : public Ui_DialogConnection
-{};
+    class DialogConnection: public Ui_DialogConnection {};
 } // namespace Ui
 
 QT_END_NAMESPACE

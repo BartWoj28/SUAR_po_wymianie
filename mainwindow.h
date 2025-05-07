@@ -3,24 +3,26 @@
 
 #pragma once
 
-#include <QMainWindow>
-#include <QTimer>
 #include <QComboBox>
+#include <QFileDialog>
+#include <QMainWindow>
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QTimer>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
-#include "UkladRegulacji.h"
-#include <QFileDialog>
 #include "ModelDialog.h"
-#include "ui_mainwindow.h"
-#include <QTcpSocket>
-#include <QTcpServer>
+#include "UkladRegulacji.h"
 #include "dialogconnection.h"
-#include "tcpserver.h"
 #include "tcpclient.h"
+#include "tcpserver.h"
+#include "ui_mainwindow.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+class MainWindow;
+}
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -50,20 +52,16 @@ private slots:
     void on_pushButtonResetCalka_clicked();
     void on_comboBoxSposobCalkowania_currentIndexChanged(int index);
 
+    void on_btnRozlacz_clicked();
+    void on_btnPolaczenie_clicked();
 
+    void slot_clientConnected(QString adr);
+    void slot_clientDisconnected();
 
-      void on_btnRozlacz_clicked();
-       void on_btnPolaczenie_clicked();
+    void slot_connected(QString adr, int port);
+    void slot_disconnected();
 
-       void slot_clientConnected(QString adr);
-       void slot_clientDisconnected();
-
-      void slot_connected(QString adr, int port);
-      void slot_disconnected();
-
-
-
-   private:
+private:
     int krok = 0;
     Ui::MainWindow *ui;
     UkladRegulacji *uklad;
@@ -99,18 +97,14 @@ private slots:
     QValueAxis *axisXUchyb;
     QValueAxis *axisYUchyb;
 
+    bool networking = false;
 
-    bool networking=false;
-
-    TCPClient* m_klient=nullptr;
-    TCPServer* m_serwer=nullptr;
-    DialogConnection* dialogPolacz;
+    TCPClient *m_klient = nullptr;
+    TCPServer *m_serwer = nullptr;
+    DialogConnection *dialogPolacz;
 
     void ResetKlient();
     void ResetSerwer();
- signals:
-
-
-
+signals:
 };
 #endif // MAINWINDOW_H

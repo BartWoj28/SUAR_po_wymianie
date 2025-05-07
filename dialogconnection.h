@@ -14,13 +14,12 @@ class DialogConnection : public QDialog
 public:
     explicit DialogConnection(QWidget *parent = nullptr);
     ~DialogConnection();
-    QString adres="127.0.0.1";
-    int port=12345;
-    bool czy_adres=true;
-    bool czyPolacz=false;
+    QString adres = "127.0.0.1";
+    int port = 12345;
+    bool czy_adres = true;
+    bool czyPolacz = false;
 
 private slots:
-
 
     void on_wybor_currentTextChanged(const QString &arg1);
 
@@ -30,8 +29,6 @@ private slots:
 
 private:
     Ui::DialogConnection *ui;
-
-
 };
 
 #endif // DIALOGCONNECTION_H

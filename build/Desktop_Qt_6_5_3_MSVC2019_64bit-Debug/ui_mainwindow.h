@@ -82,7 +82,7 @@ public:
         font.setFamilies({QString::fromUtf8("Arial")});
         font.setBold(true);
         MainWindow->setFont(font);
-        MainWindow->setLayoutDirection(Qt::LeftToRight);
+        MainWindow->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
         MainWindow->setAutoFillBackground(true);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
@@ -90,7 +90,7 @@ public:
         gridLayout->setObjectName("gridLayout");
         verticalLayout = new QVBoxLayout();
         verticalLayout->setObjectName("verticalLayout");
-        verticalLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        verticalLayout->setSizeConstraint(QLayout::SizeConstraint::SetDefaultConstraint);
 
         gridLayout->addLayout(verticalLayout, 0, 2, 3, 2);
 
@@ -99,7 +99,7 @@ public:
         label_5 = new QLabel(centralwidget);
         label_5->setObjectName("label_5");
         label_5->setAutoFillBackground(true);
-        label_5->setAlignment(Qt::AlignCenter);
+        label_5->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
         gridLayout_2->addWidget(label_5, 0, 1, 1, 1);
 
@@ -107,7 +107,7 @@ public:
         label_6->setObjectName("label_6");
         label_6->setMaximumSize(QSize(16777215, 300));
         label_6->setAutoFillBackground(true);
-        label_6->setAlignment(Qt::AlignCenter);
+        label_6->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
         gridLayout_2->addWidget(label_6, 0, 2, 1, 1);
 
@@ -149,12 +149,13 @@ public:
         sizePolicy.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
         label_7->setSizePolicy(sizePolicy);
         label_7->setMinimumSize(QSize(0, 50));
-        label_7->setLayoutDirection(Qt::LeftToRight);
+        label_7->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
         label_7->setAutoFillBackground(true);
-        label_7->setFrameShape(QFrame::NoFrame);
-        label_7->setAlignment(Qt::AlignCenter);
+        label_7->setFrameShape(QFrame::Shape::NoFrame);
+        label_7->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
         gridLayout_2->addWidget(label_7, 0, 3, 1, 1);
+
 
         gridLayout->addLayout(gridLayout_2, 3, 0, 1, 1);
 
@@ -190,6 +191,7 @@ public:
 
         horizontalLayout_2->addWidget(pushButtonResetCalka);
 
+
         gridLayout->addLayout(horizontalLayout_2, 2, 0, 1, 1);
 
         gridLayout_3 = new QGridLayout();
@@ -212,10 +214,10 @@ public:
         sizePolicy1.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
         label_8->setSizePolicy(sizePolicy1);
         label_8->setMinimumSize(QSize(134, 123));
-        label_8->setLayoutDirection(Qt::LeftToRight);
+        label_8->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
         label_8->setAutoFillBackground(true);
         label_8->setLineWidth(2);
-        label_8->setAlignment(Qt::AlignCenter);
+        label_8->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
         gridLayout_3->addWidget(label_8, 0, 0, 1, 1);
 
@@ -223,7 +225,7 @@ public:
         label_10->setObjectName("label_10");
         label_10->setMinimumSize(QSize(134, 123));
         label_10->setAutoFillBackground(true);
-        label_10->setAlignment(Qt::AlignCenter);
+        label_10->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
         gridLayout_3->addWidget(label_10, 0, 2, 1, 1);
 
@@ -250,15 +252,16 @@ public:
         label_9->setObjectName("label_9");
         label_9->setMinimumSize(QSize(135, 123));
         label_9->setAutoFillBackground(true);
-        label_9->setAlignment(Qt::AlignCenter);
+        label_9->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
         gridLayout_3->addWidget(label_9, 0, 1, 1, 1);
+
 
         gridLayout->addLayout(gridLayout_3, 0, 0, 1, 1);
 
         gridLayout_5 = new QGridLayout();
         gridLayout_5->setObjectName("gridLayout_5");
-        gridLayout_5->setSizeConstraint(QLayout::SetMinimumSize);
+        gridLayout_5->setSizeConstraint(QLayout::SizeConstraint::SetMinimumSize);
         spinBoxInterwal = new QSpinBox(centralwidget);
         spinBoxInterwal->setObjectName("spinBoxInterwal");
         spinBoxInterwal->setMinimumSize(QSize(0, 60));
@@ -279,9 +282,9 @@ public:
         label_14 = new QLabel(centralwidget);
         label_14->setObjectName("label_14");
         label_14->setMinimumSize(QSize(0, 60));
-        label_14->setLayoutDirection(Qt::RightToLeft);
+        label_14->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
         label_14->setAutoFillBackground(true);
-        label_14->setAlignment(Qt::AlignCenter);
+        label_14->setAlignment(Qt::AlignmentFlag::AlignCenter);
 
         gridLayout_5->addWidget(label_14, 0, 1, 1, 1);
 
@@ -297,7 +300,9 @@ public:
 
         verticalLayout_2->addWidget(loadButton);
 
+
         gridLayout_5->addLayout(verticalLayout_2, 0, 3, 1, 1);
+
 
         gridLayout->addLayout(gridLayout_5, 1, 0, 1, 1);
 
@@ -331,6 +336,7 @@ public:
 
         horizontalLayout->addWidget(resetButton);
 
+
         gridLayout->addLayout(horizontalLayout, 4, 0, 1, 1);
 
         horizontalLayout_3 = new QHBoxLayout();
@@ -351,6 +357,7 @@ public:
 
         horizontalLayout_3->addWidget(lblStatus);
 
+
         gridLayout->addLayout(horizontalLayout_3, 5, 0, 1, 1);
 
         MainWindow->setCentralWidget(centralwidget);
@@ -369,21 +376,15 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(
-            QCoreApplication::translate("MainWindow", "UAR - PROJEKT", nullptr));
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "UAR - PROJEKT", nullptr));
         label_5->setText(QCoreApplication::translate("MainWindow", "k", nullptr));
         label_6->setText(QCoreApplication::translate("MainWindow", "Ti", nullptr));
         label_7->setText(QCoreApplication::translate("MainWindow", "Td", nullptr));
         pushButtonARX->setText(QCoreApplication::translate("MainWindow", "ARX", nullptr));
-        comboBoxSposobCalkowania->setItemText(
-            0, QCoreApplication::translate("MainWindow", "Ti poza ca\305\202k\304\205", nullptr));
-        comboBoxSposobCalkowania->setItemText(
-            1, QCoreApplication::translate("MainWindow", "Ti pod ca\305\202k\304\205", nullptr));
+        comboBoxSposobCalkowania->setItemText(0, QCoreApplication::translate("MainWindow", "Ti poza ca\305\202k\304\205", nullptr));
+        comboBoxSposobCalkowania->setItemText(1, QCoreApplication::translate("MainWindow", "Ti pod ca\305\202k\304\205", nullptr));
 
-        pushButtonResetCalka->setText(QCoreApplication::translate(
-            "MainWindow",
-            "Resetuj cz\304\231\305\233\304\207 ca\305\202kuj\304\205c\304\205",
-            nullptr));
+        pushButtonResetCalka->setText(QCoreApplication::translate("MainWindow", "Resetuj cz\304\231\305\233\304\207 ca\305\202kuj\304\205c\304\205", nullptr));
         label_8->setText(QCoreApplication::translate("MainWindow", "AMPLITUDA", nullptr));
         label_10->setText(QCoreApplication::translate("MainWindow", "WYPELNIENIE", nullptr));
         label_9->setText(QCoreApplication::translate("MainWindow", "OKRES", nullptr));
@@ -394,17 +395,15 @@ public:
         wznowButton->setText(QCoreApplication::translate("MainWindow", "START", nullptr));
         stopButton->setText(QCoreApplication::translate("MainWindow", "STOP", nullptr));
         resetButton->setText(QCoreApplication::translate("MainWindow", "RESET", nullptr));
-        btnPolaczenie->setText(
-            QCoreApplication::translate("MainWindow", "Po\305\202\304\205czenie", nullptr));
-        btnRozlacz->setText(
-            QCoreApplication::translate("MainWindow", "Roz\305\202\304\205cz", nullptr));
+        btnPolaczenie->setText(QCoreApplication::translate("MainWindow", "Po\305\202\304\205czenie", nullptr));
+        btnRozlacz->setText(QCoreApplication::translate("MainWindow", "Roz\305\202\304\205cz", nullptr));
         lblStatus->setText(QCoreApplication::translate("MainWindow", "Tryb lokalny", nullptr));
     } // retranslateUi
+
 };
 
 namespace Ui {
-class MainWindow : public Ui_MainWindow
-{};
+    class MainWindow: public Ui_MainWindow {};
 } // namespace Ui
 
 QT_END_NAMESPACE
