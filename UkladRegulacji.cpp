@@ -19,7 +19,15 @@ UkladRegulacji::UkladRegulacji(const std::vector<double> &wspA,
 {}
 double UkladRegulacji::symuluj(int krok)
 {
-    double wynik = petla.symuluj(krok);
+    double wynik;
+    wynik = petla.symuluj(krok);
+    return wynik;
+}
+double UkladRegulacji::symuluj(int krok,double wartość){
+    double wynik;
+    if(tryb==tryb_sieciowy::serwer)
+        wynik=petla.symuluj_serwer(krok,wartość);
+    else wynik=petla.symuluj_klient(wartość);
     return wynik;
 }
 ModelARX &UkladRegulacji::getModel()

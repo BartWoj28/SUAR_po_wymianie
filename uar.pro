@@ -20,7 +20,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     tcpclient.cpp \
-    tcpserver.cpp
+    tcpserver.cpp \
+    led.cpp
 
 HEADERS += \
     Generator.h \
@@ -32,7 +33,8 @@ HEADERS += \
     dialogconnection.h \
     mainwindow.h \
     tcpclient.h \
-    tcpserver.h
+    tcpserver.h \
+    led.h
 
 FORMS += \
     ModelDialog.ui \

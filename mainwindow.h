@@ -18,6 +18,7 @@
 #include "tcpclient.h"
 #include "tcpserver.h"
 #include "ui_mainwindow.h"
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -60,6 +61,9 @@ private slots:
 
     void slot_connected(QString adr, int port);
     void slot_disconnected();
+
+    void slot_msgReceived(QString msg);
+    void slot_newMsg(QString msg);
 
 private:
     int krok = 0;
@@ -105,6 +109,9 @@ private:
 
     void ResetKlient();
     void ResetSerwer();
+
+    double wartość_ARX=0;
+    bool wyrabia=true;
 signals:
 };
 #endif // MAINWINDOW_H
