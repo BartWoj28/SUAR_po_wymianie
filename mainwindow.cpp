@@ -1,5 +1,5 @@
 #include "MainWindow.h"
-#include "ui_MainWindow.h"
+//#include "ui_MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -141,10 +141,12 @@ MainWindow::MainWindow(QWidget *parent)
     // connect(&m_server,SIGNAL(newConnection),this,SLOT(slot_connect_client()));
 
     connect(m_serwer,
-            SIGNAL(newClientConnected(QString)),
+            SIGNAL(ClientConnected(QString)),
             this,
             SLOT(slot_clientConnected(QString)));
-    connect(m_serwer, SIGNAL(clientDisconnetced()), this, SLOT(slot_clientDisconnected()));
+    connect(m_serwer, SIGNAL(ClientDisconnected), this, SLOT(slot_clientDisconnected()));
+
+    ui->btnPolaczenie->setEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -182,18 +184,20 @@ void MainWindow::on_startButton_clicked()
                                okres,
                                wypelnienie);
     ui->startButton->hide();
+    ui->btnPolaczenie->setEnabled(true);
 }
 
 void MainWindow::on_wznowButton_clicked()
 {
     int interwal = ui->spinBoxInterwal->value();
     timer->start(interwal);
+    klient_działa=true;
 }
 
 void MainWindow::aktualizujSymulacje()
 {
     if (uklad) {
-        if(uklad->Get_tryb()==tryb_sieciowy::lokalny){
+        if(tryb==tryb_sieciowy::lokalny){
         double wartoscZadana = uklad->getGenerator().generuj(krok);
         double wynik = uklad->symuluj(krok);
         double uchyb = wartoscZadana - wynik;
@@ -250,14 +254,14 @@ void MainWindow::aktualizujSymulacje()
         }
         }
         ////////////////////////////////////////////////////////////////////////////
-        else if(uklad->Get_tryb()==tryb_sieciowy::serwer){
+        else if(tryb==tryb_sieciowy::serwer){
             double wartoscZadana = uklad->getGenerator().generuj(krok);
             if(wyrabia==true){
                 wyrabia=false;
                 ui->Lampa->setPower(true);
             }
             else ui->Lampa->setPower(false);
-            double wynik = uklad->symuluj(krok,wartość_ARX);
+            double wynik = uklad->symuluj(krok,wartość_ARX,tryb);
             m_serwer->Wyślij(QString::number(wynik,'f',5));
             double uchyb = wartoscZadana - wynik;
             double wyjP = uklad->getRegulator().getWyjP();
@@ -318,6 +322,7 @@ void MainWindow::aktualizujSymulacje()
 void MainWindow::on_stopButton_clicked()
 {
     timer->stop();
+    klient_działa=false;
 }
 
 void MainWindow::on_resetButton_clicked()
@@ -338,6 +343,7 @@ void MainWindow::on_resetButton_clicked()
         axisXUchyb->setRange(0, 50);
         axisYUchyb->setRange(-10, 10);
     }
+    if(tryb==tryb_sieciowy::lokalny){
     delete uklad;
     uklad = nullptr;
     ui->spinBoxK->setValue(0.0);
@@ -352,6 +358,8 @@ void MainWindow::on_resetButton_clicked()
     wspBstart = {0.0, 0.0, 0.0};
     opoznienieStart = 1;
     zaklocenieStart = 0.0;
+    klient_działa=false;
+    ui->btnPolaczenie->setEnabled(false);}
 }
 
 void MainWindow::on_pushButtonARX_clicked()
@@ -667,20 +675,33 @@ void MainWindow::slot_clientConnected(QString adr)
 {
     ui->lblStatus->setText("ARX:" + adr);
     ui->pushButtonARX->setEnabled(false);
-    uklad->Set_Tryb(tryb_sieciowy::serwer);
+    tryb=tryb_sieciowy::serwer;
 }
 
 void MainWindow::slot_clientDisconnected()
 {
-    QMessageBox::information(this,"Rozłączono","Klient Rozłączony");
+    bool aaa=klient_działa;
+    on_stopButton_clicked();
+    QMessageBox::information(this,"Powiadomienie", "Rozłączono", QMessageBox::Ok);
+    if(aaa)
+        on_wznowButton_clicked();
+   // QMessageBox *info=new QMessageBox;
+   // info->setText("Klient rozłączony");
+   // info->setInformativeText("Rozłączono");
+   // info->show();
+    //QMessageBox::information(this,"Rozłączono","Klient Rozłączony");
     ui->lblStatus->setText("Klient rozłączony");
     ui->pushButtonARX->setEnabled(true);
-    uklad->Set_Tryb(tryb_sieciowy::lokalny);
+    tryb=tryb_sieciowy::lokalny;
+    ui->Lampa->setPower(false);
+   // delete info;
 }
 
 void MainWindow::slot_connected(QString adr, int port)
-{
-    ui->lblStatus->setText("Host:" + adr + ":" + QString::number(port));
+{ bool aaa=klient_działa;
+    on_stopButton_clicked();
+    klient_działa=aaa;
+    ui->lblStatus->setText("PID:" + adr + ":" + QString::number(port));
     ui->btnRozlacz->setEnabled(true);
     ui->comboBoxSposobCalkowania->setEnabled(false);
     ui->pushButtonResetCalka->setEnabled(false);
@@ -695,12 +716,22 @@ void MainWindow::slot_connected(QString adr, int port)
 
     ui->wznowButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
-    uklad->Set_Tryb(tryb_sieciowy::klient);
+    ui->resetButton->setEnabled(false);
+    ui->spinBoxInterwal->setEnabled(false);
+    tryb=tryb_sieciowy::klient;
 }
 
 void MainWindow::slot_disconnected()
-{
-    QMessageBox::information(this,"Rozłączono","Rozłączono");
+{   bool aaa=klient_działa;
+    on_stopButton_clicked();
+    QMessageBox::information(this,"Powiadomienie", "Rozłączono", QMessageBox::Ok);
+    if(aaa) on_wznowButton_clicked();
+//    QMessageBox *info=new QMessageBox;
+  //  info->setText("Rozłączono");
+    //info->setInformativeText("Rozłączono");
+    //info->show();
+
+   // QMessageBox::information(this,"Rozłączono","Rozłączono");
     ui->lblStatus->setText("tryb lokalny");
     ui->btnRozlacz->setEnabled(false);
 
@@ -717,12 +748,16 @@ void MainWindow::slot_disconnected()
 
     ui->wznowButton->setEnabled(true);
     ui->stopButton->setEnabled(true);
-uklad->Set_Tryb(tryb_sieciowy::lokalny);
+    ui->resetButton->setEnabled(true);
+    ui->spinBoxInterwal->setEnabled(true);
+tryb=tryb_sieciowy::lokalny;
+       ui->Lampa->setPower(false);
+//delete info;
 }
 
 void MainWindow::slot_msgReceived(QString msg){
     double wartość=msg.toDouble();
-    double message=uklad->symuluj(-1,wartość);
+    double message=uklad->symuluj(-1,wartość,tryb);
     m_klient->Wyślij(QString::number(message,'f',5));
 }
 

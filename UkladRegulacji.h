@@ -18,7 +18,7 @@ private:
     RegulatorPID regulator;
     Generator generator;
     SprzezenieZwrotne petla;
-    tryb_sieciowy tryb=tryb_sieciowy::lokalny;
+    //tryb_sieciowy tryb=tryb_sieciowy::lokalny;
 public:
     UkladRegulacji(const std::vector<double> &wspA,
                    const std::vector<double> &wspB,
@@ -36,7 +36,7 @@ public:
     ModelARX &getModel();
     RegulatorPID &getRegulator();
     Generator &getGenerator();
-    void Set_Tryb(tryb_sieciowy t){tryb =t;}
-    tryb_sieciowy Get_tryb(){return tryb;}
-    double symuluj(int krok,double wartość);
+   // void Set_Tryb(tryb_sieciowy t){tryb =t;}
+   // tryb_sieciowy Get_tryb(){return tryb;}
+    double symuluj(int krok,double wartość,tryb_sieciowy t);
 };

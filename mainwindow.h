@@ -103,8 +103,8 @@ private:
 
     bool networking = false;
 
-    TCPClient *m_klient = nullptr;
-    TCPServer *m_serwer = nullptr;
+    TCPClient *m_klient = new TCPClient;
+    TCPServer *m_serwer = new TCPServer;
     DialogConnection *dialogPolacz;
 
     void ResetKlient();
@@ -112,6 +112,8 @@ private:
 
     double wartość_ARX=0;
     bool wyrabia=true;
+    tryb_sieciowy tryb=tryb_sieciowy::lokalny;
+    bool klient_działa=false;
 signals:
 };
 #endif // MAINWINDOW_H
