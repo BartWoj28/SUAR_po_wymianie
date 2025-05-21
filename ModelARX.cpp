@@ -44,6 +44,18 @@ void ModelARX::setWspB(const std::vector<double> &noweB)
 }
 void ModelARX::setOpoznienie(int noweOpoznienie)
 {
+    if(noweOpoznienie>opoznienie){
+        double wypelnienie=0.0;
+        if(bufforWej[0]!=NULL)wypelnienie=bufforWej[0];
+        for (int i = 0; i < noweOpoznienie-opoznienie; i++) {
+            bufforWej.push_front(wypelnienie);
+        }
+    }
+    else if (noweOpoznienie<opoznienie){
+        for(int i=0;i<opoznienie-noweOpoznienie;i++){
+            bufforWej.pop_front();
+        }
+    }
     opoznienie = noweOpoznienie;
 }
 void ModelARX::wlaczZaklocenie(bool wlacz)
