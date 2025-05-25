@@ -140,10 +140,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // connect(&m_server,SIGNAL(newConnection),this,SLOT(slot_connect_client()));
 
-    connect(m_serwer,
-            SIGNAL(ClientConnected(QString)),
-            this,
-            SLOT(slot_clientConnected(QString)));
+    connect(m_serwer, SIGNAL(ClientConnected(QString)), this, SLOT(slot_clientConnected(QString)));
     connect(m_serwer, SIGNAL(ClientDisconnected), this, SLOT(slot_clientDisconnected()));
 
     ui->btnPolaczenie->setEnabled(false);
@@ -191,78 +188,16 @@ void MainWindow::on_wznowButton_clicked()
 {
     int interwal = ui->spinBoxInterwal->value();
     timer->start(interwal);
-    klient_działa=true;
+    klient_działa = true;
 }
 
 void MainWindow::aktualizujSymulacje()
 {
     if (uklad) {
-        if(tryb==tryb_sieciowy::lokalny){
-        double wartoscZadana = uklad->getGenerator().generuj(krok);
-        double wynik = uklad->symuluj(krok);
-        double uchyb = wartoscZadana - wynik;
-        double wyjP = uklad->getRegulator().getWyjP();
-        double wyjI = uklad->getRegulator().getWyjI();
-        double wyjD = uklad->getRegulator().getWyjD();
-        series->append(krok, wynik);
-        seriesSetpoint->append(krok, wartoscZadana);
-        seriesP->append(krok, wyjP);
-        seriesI->append(krok, wyjI);
-        seriesD->append(krok, wyjD);
-        seriesUchyb->append(krok, uchyb);
-        const int windowSize = 50;
-        const int followThreshold = static_cast<int>(windowSize * 0.95);
-        int minX = (krok > followThreshold) ? krok - followThreshold : 0;
-        int maxX = minX + windowSize;
-        axisX->setRange(minX, maxX);
-        axisXPID->setRange(minX, maxX);
-        axisXUchyb->setRange(minX, maxX);
-        auto adjustYAxis = [minX, maxX](QLineSeries *series, QValueAxis *axisY) {
-            double minY = std::numeric_limits<double>::max();
-            double maxY = std::numeric_limits<double>::lowest();
-            const auto &points = series->pointsVector();
-            for (int i = std::max(0, static_cast<int>(points.size()) - windowSize);
-                 i < points.size();
-                 ++i) {
-                const auto &point = points[i];
-                if (point.x() >= minX && point.x() <= maxX) {
-                    minY = std::min(minY, point.y());
-                    maxY = std::max(maxY, point.y());
-                }
-            }
-            double absMax = std::max(std::abs(minY), std::abs(maxY));
-            double margin = absMax * 0.2;
-            if (absMax == 0) {
-                absMax = 1;
-            }
-            axisY->setRange(-absMax - margin, absMax + margin);
-        };
-        adjustYAxis(series, axisY);
-        adjustYAxis(seriesP, axisYPID);
-        adjustYAxis(seriesD, axisYPID);
-        adjustYAxis(seriesI, axisYPID);
-        adjustYAxis(seriesUchyb, axisYUchyb);
-        krok++;
-        const int maxPoints = 1000;
-        if (series->count() > maxPoints) {
-            series->removePoints(0, series->count() - maxPoints);
-            seriesSetpoint->removePoints(0, seriesSetpoint->count() - maxPoints);
-            seriesP->removePoints(0, seriesP->count() - maxPoints);
-            seriesI->removePoints(0, seriesI->count() - maxPoints);
-            seriesD->removePoints(0, seriesD->count() - maxPoints);
-            seriesUchyb->removePoints(0, seriesUchyb->count() - maxPoints);
-        }
-        }
-        ////////////////////////////////////////////////////////////////////////////
-        else if(tryb==tryb_sieciowy::serwer){
+        seriesSetpoint->setName("Wartość zadana");
+        if (tryb == tryb_sieciowy::lokalny) {
             double wartoscZadana = uklad->getGenerator().generuj(krok);
-            if(wyrabia==true){
-                wyrabia=false;
-                ui->Lampa->setPower(true);
-            }
-            else ui->Lampa->setPower(false);
-            double wynik = uklad->symuluj(krok,wartość_ARX,tryb);
-            m_serwer->Wyślij(QString::number(wynik,'f',5));
+            double wynik = uklad->symuluj(krok);
             double uchyb = wartoscZadana - wynik;
             double wyjP = uklad->getRegulator().getWyjP();
             double wyjI = uklad->getRegulator().getWyjI();
@@ -315,14 +250,76 @@ void MainWindow::aktualizujSymulacje()
                 seriesD->removePoints(0, seriesD->count() - maxPoints);
                 seriesUchyb->removePoints(0, seriesUchyb->count() - maxPoints);
             }
-
+        }
+        ////////////////////////////////////////////////////////////////////////////
+        else if (tryb == tryb_sieciowy::serwer) {
+            double wartoscZadana = uklad->getGenerator().generuj(krok);
+            if (wyrabia == true) {
+                wyrabia = false;
+                ui->Lampa->setPower(true);
+            } else
+                ui->Lampa->setPower(false);
+            double wynik = uklad->symuluj(krok, wartość_ARX, tryb);
+            m_serwer->Wyślij(QString::number(wynik, 'f', 5));
+            double uchyb = wartoscZadana - wynik;
+            double wyjP = uklad->getRegulator().getWyjP();
+            double wyjI = uklad->getRegulator().getWyjI();
+            double wyjD = uklad->getRegulator().getWyjD();
+            series->append(krok, wynik);
+            seriesSetpoint->append(krok, wartoscZadana);
+            seriesP->append(krok, wyjP);
+            seriesI->append(krok, wyjI);
+            seriesD->append(krok, wyjD);
+            seriesUchyb->append(krok, uchyb);
+            const int windowSize = 50;
+            const int followThreshold = static_cast<int>(windowSize * 0.95);
+            int minX = (krok > followThreshold) ? krok - followThreshold : 0;
+            int maxX = minX + windowSize;
+            axisX->setRange(minX, maxX);
+            axisXPID->setRange(minX, maxX);
+            axisXUchyb->setRange(minX, maxX);
+            auto adjustYAxis = [minX, maxX](QLineSeries *series, QValueAxis *axisY) {
+                double minY = std::numeric_limits<double>::max();
+                double maxY = std::numeric_limits<double>::lowest();
+                const auto &points = series->pointsVector();
+                for (int i = std::max(0, static_cast<int>(points.size()) - windowSize);
+                     i < points.size();
+                     ++i) {
+                    const auto &point = points[i];
+                    if (point.x() >= minX && point.x() <= maxX) {
+                        minY = std::min(minY, point.y());
+                        maxY = std::max(maxY, point.y());
+                    }
+                }
+                double absMax = std::max(std::abs(minY), std::abs(maxY));
+                double margin = absMax * 0.2;
+                if (absMax == 0) {
+                    absMax = 1;
+                }
+                axisY->setRange(-absMax - margin, absMax + margin);
+            };
+            adjustYAxis(series, axisY);
+            adjustYAxis(seriesP, axisYPID);
+            adjustYAxis(seriesD, axisYPID);
+            adjustYAxis(seriesI, axisYPID);
+            adjustYAxis(seriesUchyb, axisYUchyb);
+            krok++;
+            const int maxPoints = 1000;
+            if (series->count() > maxPoints) {
+                series->removePoints(0, series->count() - maxPoints);
+                seriesSetpoint->removePoints(0, seriesSetpoint->count() - maxPoints);
+                seriesP->removePoints(0, seriesP->count() - maxPoints);
+                seriesI->removePoints(0, seriesI->count() - maxPoints);
+                seriesD->removePoints(0, seriesD->count() - maxPoints);
+                seriesUchyb->removePoints(0, seriesUchyb->count() - maxPoints);
+            }
         }
     }
-    }
+}
 void MainWindow::on_stopButton_clicked()
 {
     timer->stop();
-    klient_działa=false;
+    klient_działa = false;
 }
 
 void MainWindow::on_resetButton_clicked()
@@ -343,23 +340,24 @@ void MainWindow::on_resetButton_clicked()
         axisXUchyb->setRange(0, 50);
         axisYUchyb->setRange(-10, 10);
     }
-    if(tryb==tryb_sieciowy::lokalny){
-    delete uklad;
-    uklad = nullptr;
-    ui->spinBoxK->setValue(0.0);
-    ui->spinBoxTi->setValue(0.1);
-    ui->spinBoxTd->setValue(0.0);
-    ui->spinBoxAmplituda->setValue(0.0);
-    ui->spinBoxOkres->setValue(0.0);
-    ui->spinBoxWypelnienie->setValue(0.0);
-    ui->signalTypeComboBox->setCurrentIndex(0);
-    ui->startButton->show();
-    wspAstart = {0.0, 0.0, 0.0};
-    wspBstart = {0.0, 0.0, 0.0};
-    opoznienieStart = 1;
-    zaklocenieStart = 0.0;
-    klient_działa=false;
-    ui->btnPolaczenie->setEnabled(false);}
+    if (tryb == tryb_sieciowy::lokalny) {
+        delete uklad;
+        uklad = nullptr;
+        ui->spinBoxK->setValue(0.0);
+        ui->spinBoxTi->setValue(0.1);
+        ui->spinBoxTd->setValue(0.0);
+        ui->spinBoxAmplituda->setValue(0.0);
+        ui->spinBoxOkres->setValue(0.0);
+        ui->spinBoxWypelnienie->setValue(0.0);
+        ui->signalTypeComboBox->setCurrentIndex(0);
+        ui->startButton->show();
+        wspAstart = {0.0, 0.0, 0.0};
+        wspBstart = {0.0, 0.0, 0.0};
+        opoznienieStart = 1;
+        zaklocenieStart = 0.0;
+        klient_działa = false;
+        ui->btnPolaczenie->setEnabled(false);
+    }
 }
 
 void MainWindow::on_pushButtonARX_clicked()
@@ -594,34 +592,34 @@ void MainWindow::loadConfiguration()
 
 void MainWindow::on_btnRozlacz_clicked()
 {
+    if (QMessageBox::question(this, "Rozłączenie", "Czy rozłączyć?")
+        == QMessageBox::StandardButton::Yes) {
+        if (m_klient != nullptr) {
+            m_klient->Rozlacz();
+            m_klient = nullptr;
+        }
+        if (m_serwer != nullptr) {
+            m_serwer->stopNasluch();
+            delete m_serwer;
+            m_serwer = nullptr;
+            ui->btnRozlacz->setEnabled(false);
+            ui->lblStatus->setText("Stop");
+        }
 
-    if(QMessageBox::question(this,"Rozłączenie","Czy rozłączyć?")==QMessageBox::StandardButton::Yes){
-    if (m_klient != nullptr) {
-        m_klient->Rozlacz();
-        m_klient = nullptr;
-    }
-    if (m_serwer != nullptr) {
-        m_serwer->stopNasluch();
-        delete m_serwer;
-        m_serwer = nullptr;
-        ui->btnRozlacz->setEnabled(false);
-        ui->lblStatus->setText("Stop");
-    }
+        ui->comboBoxSposobCalkowania->setEnabled(true);
+        ui->pushButtonResetCalka->setEnabled(true);
+        ui->spinBoxK->setEnabled(true);
+        ui->spinBoxTd->setEnabled(true);
+        ui->spinBoxTi->setEnabled(true);
+        ui->pushButtonARX->setEnabled(true);
 
-    ui->comboBoxSposobCalkowania->setEnabled(true);
-    ui->pushButtonResetCalka->setEnabled(true);
-    ui->spinBoxK->setEnabled(true);
-    ui->spinBoxTd->setEnabled(true);
-    ui->spinBoxTi->setEnabled(true);
-    ui->pushButtonARX->setEnabled(true);
+        ui->spinBoxAmplituda->setEnabled(true);
+        ui->spinBoxOkres->setEnabled(true);
+        ui->spinBoxWypelnienie->setEnabled(true);
+        ui->signalTypeComboBox->setEnabled(true);
 
-    ui->spinBoxAmplituda->setEnabled(true);
-    ui->spinBoxOkres->setEnabled(true);
-    ui->spinBoxWypelnienie->setEnabled(true);
-    ui->signalTypeComboBox->setEnabled(true);
-
-    ui->wznowButton->setEnabled(true);
-    ui->stopButton->setEnabled(true);
+        ui->wznowButton->setEnabled(true);
+        ui->stopButton->setEnabled(true);
     }
 }
 
@@ -656,7 +654,7 @@ void MainWindow::ResetKlient()
     m_klient = new TCPClient(this);
     connect(m_klient, SIGNAL(connected(QString, int)), this, SLOT(slot_connected(QString, int)));
     connect(m_klient, SIGNAL(disconnected()), this, SLOT(slot_disconnected()));
-    connect(m_klient,SIGNAL(Otrzymano(QString)),this,SLOT(slot_msgReceived(QString)));
+    connect(m_klient, SIGNAL(Otrzymano(QString)), this, SLOT(slot_msgReceived(QString)));
 }
 
 void MainWindow::ResetSerwer()
@@ -668,39 +666,40 @@ void MainWindow::ResetSerwer()
     m_serwer = new TCPServer(this);
     connect(m_serwer, SIGNAL(ClientConnected(QString)), this, SLOT(slot_clientConnected(QString)));
     connect(m_serwer, SIGNAL(ClientDisconnected()), this, SLOT(slot_clientDisconnected()));
-    connect(m_serwer,SIGNAL(NewMsgFrom(QString)),this,SLOT(slot_newMsg(QString)));
+    connect(m_serwer, SIGNAL(NewMsgFrom(QString)), this, SLOT(slot_newMsg(QString)));
 }
 
 void MainWindow::slot_clientConnected(QString adr)
 {
     ui->lblStatus->setText("ARX:" + adr);
     ui->pushButtonARX->setEnabled(false);
-    tryb=tryb_sieciowy::serwer;
+    tryb = tryb_sieciowy::serwer;
 }
 
 void MainWindow::slot_clientDisconnected()
 {
-    bool aaa=klient_działa;
+    bool aaa = klient_działa;
     on_stopButton_clicked();
-    QMessageBox::information(this,"Powiadomienie", "Rozłączono", QMessageBox::Ok);
-    if(aaa)
+    QMessageBox::information(this, "Powiadomienie", "Rozłączono", QMessageBox::Ok);
+    if (aaa)
         on_wznowButton_clicked();
-   // QMessageBox *info=new QMessageBox;
-   // info->setText("Klient rozłączony");
-   // info->setInformativeText("Rozłączono");
-   // info->show();
+    // QMessageBox *info=new QMessageBox;
+    // info->setText("Klient rozłączony");
+    // info->setInformativeText("Rozłączono");
+    // info->show();
     //QMessageBox::information(this,"Rozłączono","Klient Rozłączony");
     ui->lblStatus->setText("Klient rozłączony");
     ui->pushButtonARX->setEnabled(true);
-    tryb=tryb_sieciowy::lokalny;
+    tryb = tryb_sieciowy::lokalny;
     ui->Lampa->setPower(false);
-   // delete info;
+    // delete info;
 }
 
 void MainWindow::slot_connected(QString adr, int port)
-{ bool aaa=klient_działa;
+{
+    bool aaa = klient_działa;
     on_stopButton_clicked();
-    klient_działa=aaa;
+    klient_działa = aaa;
     ui->lblStatus->setText("PID:" + adr + ":" + QString::number(port));
     ui->btnRozlacz->setEnabled(true);
     ui->comboBoxSposobCalkowania->setEnabled(false);
@@ -718,20 +717,22 @@ void MainWindow::slot_connected(QString adr, int port)
     ui->stopButton->setEnabled(false);
     ui->resetButton->setEnabled(false);
     ui->spinBoxInterwal->setEnabled(false);
-    tryb=tryb_sieciowy::klient;
+    tryb = tryb_sieciowy::klient;
 }
 
 void MainWindow::slot_disconnected()
-{   bool aaa=klient_działa;
+{
+    bool aaa = klient_działa;
     on_stopButton_clicked();
-    QMessageBox::information(this,"Powiadomienie", "Rozłączono", QMessageBox::Ok);
-    if(aaa) on_wznowButton_clicked();
-//    QMessageBox *info=new QMessageBox;
-  //  info->setText("Rozłączono");
+    QMessageBox::information(this, "Powiadomienie", "Rozłączono", QMessageBox::Ok);
+    if (aaa)
+        on_wznowButton_clicked();
+    //    QMessageBox *info=new QMessageBox;
+    //  info->setText("Rozłączono");
     //info->setInformativeText("Rozłączono");
     //info->show();
 
-   // QMessageBox::information(this,"Rozłączono","Rozłączono");
+    // QMessageBox::information(this,"Rozłączono","Rozłączono");
     ui->lblStatus->setText("tryb lokalny");
     ui->btnRozlacz->setEnabled(false);
 
@@ -750,18 +751,69 @@ void MainWindow::slot_disconnected()
     ui->stopButton->setEnabled(true);
     ui->resetButton->setEnabled(true);
     ui->spinBoxInterwal->setEnabled(true);
-tryb=tryb_sieciowy::lokalny;
-       ui->Lampa->setPower(false);
-//delete info;
+    tryb = tryb_sieciowy::lokalny;
+    ui->Lampa->setPower(false);
+    //delete info;
 }
 
-void MainWindow::slot_msgReceived(QString msg){
-    double wartość=msg.toDouble();
-    double message=uklad->symuluj(-1,wartość,tryb);
-    m_klient->Wyślij(QString::number(message,'f',5));
+void MainWindow::slot_msgReceived(QString msg)
+{
+    double wartość = msg.toDouble();
+    double message = uklad->symuluj(-1, wartość, tryb);
+    seriesSetpoint->setName("");
+
+    series->append(krok, message);
+    seriesSetpoint->append(krok, message);
+    seriesP->append(krok, wartość);
+    seriesI->append(krok, wartość);
+    seriesD->append(krok, wartość);
+    const int windowSize = 50;
+    const int followThreshold = static_cast<int>(windowSize * 0.95);
+    int minX = (krok> followThreshold) ? krok - followThreshold : 0;
+    int maxX = minX + windowSize;
+    axisX->setRange(minX, maxX);
+    axisXPID->setRange(minX, maxX);
+    axisXUchyb->setRange(minX, maxX);
+    auto adjustYAxis = [minX, maxX](QLineSeries *series, QValueAxis *axisY) {
+        double minY = std::numeric_limits<double>::max();
+        double maxY = std::numeric_limits<double>::lowest();
+        const auto &points = series->pointsVector();
+        for (int i = std::max(0, static_cast<int>(points.size()) - windowSize);
+             i < points.size();
+             ++i) {
+            const auto &point = points[i];
+            if (point.x() >= minX && point.x() <= maxX) {
+                minY = std::min(minY, point.y());
+                maxY = std::max(maxY, point.y());
+            }
+        }
+        double absMax = std::max(std::abs(minY), std::abs(maxY));
+        double margin = absMax * 0.2;
+        if (absMax == 0) {
+            absMax = 1;
+        }
+        axisY->setRange(-absMax - margin, absMax + margin);
+    };
+    adjustYAxis(series, axisY);
+    adjustYAxis(seriesP, axisYPID);
+    adjustYAxis(seriesD, axisYPID);
+    adjustYAxis(seriesI, axisYPID);
+    adjustYAxis(seriesUchyb, axisYUchyb);
+    krok++;
+    const int maxPoints = 1000;
+    if (series->count() > maxPoints) {
+        series->removePoints(0, series->count() - maxPoints);
+        seriesP->removePoints(0, seriesP->count() - maxPoints);
+        seriesI->removePoints(0, seriesI->count() - maxPoints);
+        seriesD->removePoints(0, seriesD->count() - maxPoints);
+    }
+
+
+    m_klient->Wyślij(QString::number(message, 'f', 5));
 }
 
-void MainWindow::slot_newMsg(QString msg){
-    wartość_ARX=msg.toDouble();
-    wyrabia=true;
+void MainWindow::slot_newMsg(QString msg)
+{
+    wartość_ARX = msg.toDouble();
+    wyrabia = true;
 }
