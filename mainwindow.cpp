@@ -194,7 +194,7 @@ void MainWindow::on_wznowButton_clicked()
 void MainWindow::aktualizujSymulacje()
 {
     if (uklad) {
-        seriesSetpoint->setName("Wartość zadana");
+        seriesSetpoint->setName("Wartość Zadana");
         if (tryb == tryb_sieciowy::lokalny) {
             double wartoscZadana = uklad->getGenerator().generuj(krok);
             double wynik = uklad->symuluj(krok);
