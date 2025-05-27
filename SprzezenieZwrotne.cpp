@@ -16,16 +16,18 @@ double SprzezenieZwrotne::symuluj(int krok)
     return aktualnaWartosc;
 }
 
-double SprzezenieZwrotne::symuluj_klient(double regulacja){
-     double aktualnaWartosc = model->symuluj(regulacja);
+double SprzezenieZwrotne::symuluj_klient(double regulacja)
+{
+    double aktualnaWartosc = model->symuluj(regulacja);
     return aktualnaWartosc;
 }
 
-double SprzezenieZwrotne::symuluj_serwer(int krok, double wartość){
+double SprzezenieZwrotne::symuluj_serwer(int krok, double wartość)
+{
     double wartoscZadana = generator->generuj(krok);
     double uchyb = wartoscZadana - poprzedniaWartosc;
     double sterowanie = regulator->symuluj(uchyb);
-    double aktualnaWartosc=wartość;
+    double aktualnaWartosc = wartość;
     poprzedniaWartosc = aktualnaWartosc;
     return sterowanie;
 }

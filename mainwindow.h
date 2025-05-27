@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QFileDialog>
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QTimer>
@@ -18,7 +19,6 @@
 #include "tcpclient.h"
 #include "tcpserver.h"
 #include "ui_mainwindow.h"
-#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -110,10 +110,10 @@ private:
     void ResetKlient();
     void ResetSerwer();
 
-    double wartość_ARX=0;
-    bool wyrabia=true;
-    tryb_sieciowy tryb=tryb_sieciowy::lokalny;
-    bool klient_działa=false;
+    double wartość_ARX = 0;
+    bool wyrabia = true;
+    tryb_sieciowy tryb = tryb_sieciowy::lokalny;
+    bool klient_działa = false;
 signals:
 };
 #endif // MAINWINDOW_H

@@ -27,7 +27,7 @@ void TCPServer::slot_connect_client()
     auto adr = client->peerAddress();
 
     connect(client, SIGNAL(disconnected()), this, SLOT(slot_client_disconnetcted()));
-    connect(client,SIGNAL(readyRead()),this,SLOT(slot_NewMsg()));
+    connect(client, SIGNAL(readyRead()), this, SLOT(slot_NewMsg()));
     emit ClientConnected(adr.toString());
 }
 
@@ -37,11 +37,13 @@ void TCPServer::slot_client_disconnetcted()
     emit ClientDisconnected();
 }
 
-void TCPServer::Wyślij(QString msg){
+void TCPServer::Wyślij(QString msg)
+{
     m_klient->write(msg.toUtf8());
 }
 
-void TCPServer::slot_NewMsg(){
-    QString msg=m_klient->readAll();
+void TCPServer::slot_NewMsg()
+{
+    QString msg = m_klient->readAll();
     emit NewMsgFrom(msg);
 }

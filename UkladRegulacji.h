@@ -5,11 +5,7 @@
 #include "RegulatorPID.h"
 #include "SprzezenieZwrotne.h"
 
-enum class tryb_sieciowy{
-  serwer,
-klient,
-    lokalny
-};
+enum class tryb_sieciowy { serwer, klient, lokalny };
 
 class UkladRegulacji
 {
@@ -36,7 +32,7 @@ public:
     ModelARX &getModel();
     RegulatorPID &getRegulator();
     Generator &getGenerator();
-   // void Set_Tryb(tryb_sieciowy t){tryb =t;}
-   // tryb_sieciowy Get_tryb(){return tryb;}
-    double symuluj(int krok,double wartość,tryb_sieciowy t);
+    // void Set_Tryb(tryb_sieciowy t){tryb =t;}
+    // tryb_sieciowy Get_tryb(){return tryb;}
+    double symuluj(int krok, double wartość, tryb_sieciowy t);
 };

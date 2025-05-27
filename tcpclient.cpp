@@ -6,7 +6,7 @@ TCPClient::TCPClient(QObject *parent)
 {
     connect(&m_socket, SIGNAL(connected()), this, SLOT(slot_connected()));
     connect(&m_socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
-    connect(&m_socket,SIGNAL(readyRead()),this,SLOT(slot_GotowyOdczyt()));
+    connect(&m_socket, SIGNAL(readyRead()), this, SLOT(slot_GotowyOdczyt()));
 }
 
 void TCPClient::Polacz(QString address, int port)
@@ -26,12 +26,14 @@ void TCPClient::slot_connected()
     emit connected(m_ipAddress, m_port);
 }
 
-void TCPClient::Wyślij(QString wartość){
-    QByteArray data=wartość.toUtf8();
+void TCPClient::Wyślij(QString wartość)
+{
+    QByteArray data = wartość.toUtf8();
     m_socket.write(data);
 }
 
-void TCPClient::slot_GotowyOdczyt(){
-    auto message=m_socket.readAll();
+void TCPClient::slot_GotowyOdczyt()
+{
+    auto message = m_socket.readAll();
     emit Otrzymano(message);
 }

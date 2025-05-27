@@ -260,7 +260,7 @@ void MainWindow::aktualizujSymulacje()
             } else
                 ui->Lampa->setPower(false);
             double wynik = uklad->symuluj(krok, wartość_ARX, tryb);
-            m_serwer->Wyślij(QString::number(wynik, 'f', 5));
+            m_serwer->Wyślij(QString::number(wynik, 'f', 6)+":"+QString::number(wartoscZadana, 'f', 6));
             double uchyb = wartoscZadana - wynik;
             double wyjP = uklad->getRegulator().getWyjP();
             double wyjI = uklad->getRegulator().getWyjI();
@@ -759,12 +759,13 @@ void MainWindow::slot_disconnected()
 
 void MainWindow::slot_msgReceived(QString msg)
 {
-    double wartość = msg.toDouble();
+    QStringList dane=msg.split(':');
+    double wartość = dane.at(0).toDouble();
+    double zadana=dane.at(1).toDouble();
     double message = uklad->symuluj(-1, wartość, tryb);
-    seriesSetpoint->setName("");
 
     series->append(krok, message);
-    seriesSetpoint->append(krok, message);
+    seriesSetpoint->append(krok, zadana);
     seriesP->append(krok, wartość);
     seriesI->append(krok, wartość);
     seriesD->append(krok, wartość);
