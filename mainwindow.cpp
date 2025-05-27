@@ -194,7 +194,7 @@ void MainWindow::on_wznowButton_clicked()
 void MainWindow::aktualizujSymulacje()
 {
     if (uklad) {
-        seriesSetpoint->setName("Wartość Zadana");
+        seriesSetpoint->setName("Wartość zadana");
         if (tryb == tryb_sieciowy::lokalny) {
             double wartoscZadana = uklad->getGenerator().generuj(krok);
             double wynik = uklad->symuluj(krok);
@@ -256,7 +256,7 @@ void MainWindow::aktualizujSymulacje()
             double wartoscZadana = uklad->getGenerator().generuj(krok);
             if (wyrabia == true) {
                 wyrabia = false;
-                ui->Lampa->setPower(true);
+                //ui->Lampa->setPower(true);
             } else
                 ui->Lampa->setPower(false);
             double wynik = uklad->symuluj(krok, wartość_ARX, tryb);
@@ -718,6 +718,7 @@ void MainWindow::slot_connected(QString adr, int port)
     ui->resetButton->setEnabled(false);
     ui->spinBoxInterwal->setEnabled(false);
     tryb = tryb_sieciowy::klient;
+    ui->Lampa->setPower(true);
 }
 
 void MainWindow::slot_disconnected()
@@ -809,11 +810,12 @@ void MainWindow::slot_msgReceived(QString msg)
     }
 
 
-    m_klient->Wyślij(QString::number(message, 'f', 5));
+    m_klient->Wyślij(QString::number(message, 'f', 6));
 }
 
 void MainWindow::slot_newMsg(QString msg)
 {
     wartość_ARX = msg.toDouble();
     wyrabia = true;
+    ui->Lampa->setPower(true);
 }
