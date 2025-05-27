@@ -114,6 +114,7 @@ private:
     bool wyrabia = true;
     tryb_sieciowy tryb = tryb_sieciowy::lokalny;
     bool klient_działa = false;
+    bool m_init=false;
 signals:
 };
 #endif // MAINWINDOW_H

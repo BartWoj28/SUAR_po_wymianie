@@ -253,6 +253,7 @@ void MainWindow::aktualizujSymulacje()
         }
         ////////////////////////////////////////////////////////////////////////////
         else if (tryb == tryb_sieciowy::serwer) {
+            if(m_init){
             double wartoscZadana = uklad->getGenerator().generuj(krok);
             if (wyrabia == true) {
                 wyrabia = false;
@@ -261,11 +262,11 @@ void MainWindow::aktualizujSymulacje()
                 ui->Lampa->setPower(false);
             double wynik = uklad->symuluj(krok, wartość_ARX, tryb);
             m_serwer->Wyślij(QString::number(wynik, 'f', 6)+":"+QString::number(wartoscZadana, 'f', 6));
-            double uchyb = wartoscZadana - wynik;
+            double uchyb = wartoscZadana - wartość_ARX;
             double wyjP = uklad->getRegulator().getWyjP();
             double wyjI = uklad->getRegulator().getWyjI();
             double wyjD = uklad->getRegulator().getWyjD();
-            series->append(krok, wynik);
+            series->append(krok, wartość_ARX);
             seriesSetpoint->append(krok, wartoscZadana);
             seriesP->append(krok, wyjP);
             seriesI->append(krok, wyjI);
@@ -313,6 +314,12 @@ void MainWindow::aktualizujSymulacje()
                 seriesD->removePoints(0, seriesD->count() - maxPoints);
                 seriesUchyb->removePoints(0, seriesUchyb->count() - maxPoints);
             }
+            }
+            else {
+                double wartoscZadana = uklad->getGenerator().generuj(krok);
+                double wynik = uklad->symuluj(krok, wartość_ARX, tryb);
+                m_serwer->Wyślij(QString::number(wynik, 'f', 6)+":"+QString::number(wartoscZadana, 'f', 6));
+            }
         }
     }
 }
@@ -358,6 +365,7 @@ void MainWindow::on_resetButton_clicked()
         klient_działa = false;
         ui->btnPolaczenie->setEnabled(false);
     }
+    m_init=false;
 }
 
 void MainWindow::on_pushButtonARX_clicked()
@@ -719,6 +727,12 @@ void MainWindow::slot_connected(QString adr, int port)
     ui->spinBoxInterwal->setEnabled(false);
     tryb = tryb_sieciowy::klient;
     ui->Lampa->setPower(true);
+
+
+    seriesP->setName("Składowa PID");
+    seriesI->hide();
+    seriesD->hide();
+
 }
 
 void MainWindow::slot_disconnected()
@@ -734,6 +748,10 @@ void MainWindow::slot_disconnected()
     //info->show();
 
     // QMessageBox::information(this,"Rozłączono","Rozłączono");
+    seriesP->setName("Składowa P");
+    seriesI->show();
+    seriesD->show();
+
     ui->lblStatus->setText("tryb lokalny");
     ui->btnRozlacz->setEnabled(false);
 
@@ -764,11 +782,14 @@ void MainWindow::slot_msgReceived(QString msg)
     double zadana=dane.at(1).toDouble();
     double message = uklad->symuluj(-1, wartość, tryb);
 
+    m_klient->Wyślij(QString::number(message, 'f', 6));
+
     series->append(krok, message);
-    seriesSetpoint->append(krok, zadana);
+    seriesSetpoint->append(krok-1, zadana);
     seriesP->append(krok, wartość);
     seriesI->append(krok, wartość);
     seriesD->append(krok, wartość);
+    seriesUchyb->append(krok,zadana-message);
     const int windowSize = 50;
     const int followThreshold = static_cast<int>(windowSize * 0.95);
     int minX = (krok> followThreshold) ? krok - followThreshold : 0;
@@ -809,9 +830,6 @@ void MainWindow::slot_msgReceived(QString msg)
         seriesI->removePoints(0, seriesI->count() - maxPoints);
         seriesD->removePoints(0, seriesD->count() - maxPoints);
     }
-
-
-    m_klient->Wyślij(QString::number(message, 'f', 6));
 }
 
 void MainWindow::slot_newMsg(QString msg)
@@ -819,4 +837,5 @@ void MainWindow::slot_newMsg(QString msg)
     wartość_ARX = msg.toDouble();
     wyrabia = true;
     ui->Lampa->setPower(true);
+    m_init=true;
 }
