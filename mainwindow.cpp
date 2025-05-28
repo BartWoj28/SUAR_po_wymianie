@@ -198,7 +198,7 @@ void MainWindow::aktualizujSymulacje()
         if (tryb == tryb_sieciowy::lokalny) {
             double wartoscZadana = uklad->getGenerator().generuj(krok);
             double wynik = uklad->symuluj(krok);
-            double uchyb = wartoscZadana - wynik;
+            double uchyb=wartoscZadana-wynik;
             double wyjP = uklad->getRegulator().getWyjP();
             double wyjI = uklad->getRegulator().getWyjI();
             double wyjD = uklad->getRegulator().getWyjD();
@@ -207,7 +207,7 @@ void MainWindow::aktualizujSymulacje()
             seriesP->append(krok, wyjP);
             seriesI->append(krok, wyjI);
             seriesD->append(krok, wyjD);
-            seriesUchyb->append(krok, uchyb);
+            seriesUchyb->append(krok,uchyb);
             const int windowSize = 50;
             const int followThreshold = static_cast<int>(windowSize * 0.95);
             int minX = (krok > followThreshold) ? krok - followThreshold : 0;
@@ -253,7 +253,7 @@ void MainWindow::aktualizujSymulacje()
         }
         ////////////////////////////////////////////////////////////////////////////
         else if (tryb == tryb_sieciowy::serwer) {
-            if(m_init){
+          //  if(m_init){
             double wartoscZadana = uklad->getGenerator().generuj(krok);
             if (wyrabia == true) {
                 wyrabia = false;
@@ -262,16 +262,13 @@ void MainWindow::aktualizujSymulacje()
                 ui->Lampa->setPower(false);
             double wynik = uklad->symuluj(krok, wartość_ARX, tryb);
             m_serwer->Wyślij(QString::number(wynik, 'f', 6)+":"+QString::number(wartoscZadana, 'f', 6));
-            double uchyb = wartoscZadana - wartość_ARX;
             double wyjP = uklad->getRegulator().getWyjP();
             double wyjI = uklad->getRegulator().getWyjI();
             double wyjD = uklad->getRegulator().getWyjD();
-            series->append(krok, wartość_ARX);
             seriesSetpoint->append(krok, wartoscZadana);
             seriesP->append(krok, wyjP);
             seriesI->append(krok, wyjI);
             seriesD->append(krok, wyjD);
-            seriesUchyb->append(krok, uchyb);
             const int windowSize = 50;
             const int followThreshold = static_cast<int>(windowSize * 0.95);
             int minX = (krok > followThreshold) ? krok - followThreshold : 0;
@@ -313,12 +310,6 @@ void MainWindow::aktualizujSymulacje()
                 seriesI->removePoints(0, seriesI->count() - maxPoints);
                 seriesD->removePoints(0, seriesD->count() - maxPoints);
                 seriesUchyb->removePoints(0, seriesUchyb->count() - maxPoints);
-            }
-            }
-            else {
-                double wartoscZadana = uklad->getGenerator().generuj(krok);
-                double wynik = uklad->symuluj(krok, wartość_ARX, tryb);
-                m_serwer->Wyślij(QString::number(wynik, 'f', 6)+":"+QString::number(wartoscZadana, 'f', 6));
             }
         }
     }
@@ -682,6 +673,8 @@ void MainWindow::slot_clientConnected(QString adr)
     ui->lblStatus->setText("ARX:" + adr);
     ui->pushButtonARX->setEnabled(false);
     tryb = tryb_sieciowy::serwer;
+    ui->resetButton->setEnabled(false);
+    ui->Lampa->setPower(true);
 }
 
 void MainWindow::slot_clientDisconnected()
@@ -700,6 +693,8 @@ void MainWindow::slot_clientDisconnected()
     ui->pushButtonARX->setEnabled(true);
     tryb = tryb_sieciowy::lokalny;
     ui->Lampa->setPower(false);
+    ui->resetButton->setEnabled(true);
+    m_init=false;
     // delete info;
 }
 
@@ -732,6 +727,7 @@ void MainWindow::slot_connected(QString adr, int port)
     seriesP->setName("Składowa PID");
     seriesI->hide();
     seriesD->hide();
+
 
 }
 
@@ -773,6 +769,7 @@ void MainWindow::slot_disconnected()
     tryb = tryb_sieciowy::lokalny;
     ui->Lampa->setPower(false);
     //delete info;
+    m_init=false;
 }
 
 void MainWindow::slot_msgReceived(QString msg)
@@ -785,7 +782,7 @@ void MainWindow::slot_msgReceived(QString msg)
     m_klient->Wyślij(QString::number(message, 'f', 6));
 
     series->append(krok, message);
-    seriesSetpoint->append(krok-1, zadana);
+    seriesSetpoint->append(krok, zadana);
     seriesP->append(krok, wartość);
     seriesI->append(krok, wartość);
     seriesD->append(krok, wartość);
@@ -830,12 +827,17 @@ void MainWindow::slot_msgReceived(QString msg)
         seriesI->removePoints(0, seriesI->count() - maxPoints);
         seriesD->removePoints(0, seriesD->count() - maxPoints);
     }
+
 }
 
 void MainWindow::slot_newMsg(QString msg)
 {
     wartość_ARX = msg.toDouble();
+    double wartoscZadana = uklad->getGenerator().generuj(krok-1);
+    double uchyb = wartoscZadana - wartość_ARX;
     wyrabia = true;
     ui->Lampa->setPower(true);
     m_init=true;
+    series->append(krok-1, wartość_ARX);
+    seriesUchyb->append(krok-1, uchyb);
 }

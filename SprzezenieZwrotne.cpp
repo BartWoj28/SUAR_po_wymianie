@@ -22,12 +22,10 @@ double SprzezenieZwrotne::symuluj_klient(double regulacja)
     return aktualnaWartosc;
 }
 
-double SprzezenieZwrotne::symuluj_serwer(int krok, double wartość)
+double SprzezenieZwrotne::symuluj_serwer(int krok, double wartość_arx)
 {
     double wartoscZadana = generator->generuj(krok);
-    double uchyb = wartoscZadana - poprzedniaWartosc;
+    double uchyb = wartoscZadana - wartość_arx;
     double sterowanie = regulator->symuluj(uchyb);
-    double aktualnaWartosc = wartość;
-    poprzedniaWartosc = aktualnaWartosc;
     return sterowanie;
 }
